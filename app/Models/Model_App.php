@@ -326,6 +326,76 @@ else
 }
 
 
+function InsertReservaciones($id_user,$fecha_inicial,$hora_servicio,$numchofer,$numunidad,$pasajeros,$total,$id_cliente,$domicilio){
+    $sql = "INSERT INTO tbl_reservaciones (id_usuario_reserva,fecha_servicio,hora_servicio,id_chofer,num_pasajeros,costo_servicio,id_cliente,domicilio_origen) 
+  VALUES ('{$id_user}','{$fecha_inicial}','{$hora_servicio}','{$numchofer}','{$pasajeros}','{$total}','{$id_cliente}','{$domicilio}')";
+  $query= $this->db->query($sql);
+  
+  if($query) 
+  {
+    return $query;
+  }
+  else
+  {
+    return false;
+  }
+
+    
+}
+
+
+function InsertCliente ($nom_cliente,$ape_cliente,$telefono){
+     $sql = "INSERT INTO tbl_clientes (nombre,apellidos,telefono1) 
+  VALUES ('{$nom_cliente}','{$ape_cliente}','{$telefono}')";
+  $query= $this->db->query($sql);
+  
+  if($query) 
+  {
+    return $query;
+  }
+  else
+  {
+    return false;
+  }
+}
+
+function BuscarCliente($telefono)
+{
+  $sql = "SELECT *
+  FROM tbl_clientes
+  WHERE telefono1='{$telefono}'";
+  $query= $this->db->query($sql);
+  
+   if($query)
+ {
+   return "si";
+ }
+else
+ {
+   return false;
+ }
+}
+
+function ObtenerCliente($telefono)
+{
+  $sql = "SELECT *
+  FROM tbl_clientes
+  WHERE telefono1='{$telefono}'";
+  $query= $this->db->query($sql);
+  
+ return $query->getResult();
+}
+
+function ObtenerReserva($id_cliente,$fecha_inicial,$hora_servicio,$costo){
+     $sql = "SELECT *
+  FROM tbl_reservaciones
+  WHERE id_cliente='{$id_cliente}' AND fecha_servicio='{$fecha_inicial}' AND hora_servicio='{$hora_servicio}' AND costo_servicio='{$costo}'";
+  $query= $this->db->query($sql);
+  
+ return $query->getResult();
+}
+
+
 
 }
 

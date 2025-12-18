@@ -1,0 +1,15 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\app",
+    "\\app\\Models",
+    "\\app\\Views",
+    "\\app\\Views\\avratech",
+    "\\app\\Views\\avratech\\layouts",
+    "\\public",
+    "\\public\\plantilla",
+    "\\public\\plantilla\\js"
+  ],
+  "SelectedNode": "\\app\\Views\\avratech\\index.php",
+  "PreviewInSolutionExplorer": false
+}

@@ -1135,10 +1135,19 @@ class AppControll extends BaseController
 		$pasajeros=$_GET['pasajeros'];
 		$total=$_GET['total'];
         $id_chofer=explode("-", $_GET['numchofer']);
+        $id_chofer=$id_chofer[0];
         $numunidad=explode("-", $_GET['numunidad']);
+        $numunidad=$numunidad[0];
+        $id_cliente = "";
+        $id_reserva = "";
+        $telefono = $_GET['telefono'];
+        $domicilio = $_GET['domicilio'];
+	    $nom_cliente = $_GET['nombre'];
+		$ape_cliente = $_GET['apellido'];
 
 
-		$fecha_inicial=$fecha_inicial." ".$hora_inicial.":".$minuto_inicial.":00";
+		//$fecha_inicial=$fecha_inicial." ".$hora_inicial.":".$minuto_inicial.":00";
+		$hora_servicio=$hora_inicial.":".$minuto_inicial;
 		
 		
 		$total_mxn = 0;
@@ -1152,10 +1161,11 @@ class AppControll extends BaseController
             
             $datacliente = $this->model->ObtenerCliente($telefono);
             foreach ($datacliente as $row) {
-			    $id_cliente = $row->destino;
+			    $id_cliente = $row->id_cliente;
 			    $nom_cliente = $row->nombre;
+			     $ape_cliente = $row->apellidos;
 		    }
-            $data = $this->model->InsertReservaciones($id_user,$fecha_inicial,$numchofer,$numunidad,$pasajeros,$total,$id_cliente,$domicilio,$telefono);
+            $data = $this->model->InsertReservaciones($id_user,$fecha_inicial,$hora_servicio,$id_chofer,$numunidad,$pasajeros,$total,$id_cliente,$domicilio);
             
             
         
@@ -1166,27 +1176,27 @@ class AppControll extends BaseController
         else
         {
             //creamos cliente
-             $data = $this->model->InsertCliente($nom_cliente,$telefono);
+             $data = $this->model->InsertCliente($nom_cliente,$ape_cliente,$telefono);
+             
              $datacliente = $this->model->ObtenerCliente($telefono);
             foreach ($datacliente as $row) {
-			    $id_cliente = $row->destino;
+			    $id_cliente = $row->id_cliente;
 			    $nom_cliente = $row->nombre;
+			    $ape_cliente = $row->apellidos;
 		    }
-            $data = $this->model->InsertReservaciones($id_user,$fecha_inicial,$numchofer,$numunidad,$pasajeros,$total,$id_cliente,$domicilio,$telefono);
+            $data = $this->model->InsertReservaciones($id_user,$fecha_inicial,$hora_servicio,$id_chofer,$numunidad,$pasajeros,$total,$id_cliente,$domicilio);
+            
            
             
         }
+          $datareserva = $this->model->ObtenerReserva($id_cliente,$fecha_inicial,$hora_servicio,$total);
+            foreach ($datareserva as $row) {
+			    $id_reserva = $row->id_reservacion;
+		    }
+        
+    return "\n\n\n\n\n***RESERVCION***"."\n# de reserva: {$id_reserva}\nDATOS DEL CLIENTE \nNombre:  {$nom_cliente}\nApellido: {$ape_cliente} \nDATOS DE LA RESERVACION\nFecha:{$fecha_inicial}\nHorario: {$hora_servicio}\n \nDomicilio: {$domicilio} \nTOTAL:{$total}";
 		
 		
-		
-
-		$data = $this->model->CorteCajaVendedorDetallado($id_user,$fecha_inicial,$fecha_final);
-		
-		if(!$data){
-			return "0";
-		}
-		
-		$data_text = "";$DatosVendedor="";$empresaVendedor="";
 		
 
 	}
