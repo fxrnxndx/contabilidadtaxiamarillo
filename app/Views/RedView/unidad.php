@@ -54,7 +54,7 @@
 
 
  <!--INICIO DE FORMULARIO -->
- <form action="<?php  echo(base_url("Home/AgregarUnidad"));?>" method="post" accept-charset="utf-8">
+ <form action="<?php  echo(base_url("Home/AgregarUnidad"));?>" method="post" enctype="multipart/form-data" accept-charset="utf-8">
  <input type="hidden"  name="idunidad" id="idunidad" value="0">
  <div class="row mt-3" id="formulario" style="display:none">
       <div class="col-lg-6">
@@ -82,6 +82,14 @@
             <div class="form-group">
             <label for="input-3">Año</label>
             <input type="number" class="form-control" id="Ano" name="ano" placeholder="Ingresar año" required>
+           </div>
+           <div class="form-group">
+            <label for="input-1">Poliza de seguro PDF</label>
+            <input class="form-control" name="poliza" id="poliza" type="file" accept="application/pdf"/>
+           </div>
+            <div class="form-group">
+            <label for="input-1">Tarjeta de circulacion PDF</label>
+            <input class="form-control" name="tarjeta" id="tarjeta" type="file" accept="application/pdf"/>
            </div>
            <div class="form-group ">
             <label for="input-1">Socio</label>
@@ -143,6 +151,8 @@
                        <th>Modelo</th>
                        <th>Año</th>
                        <th>Socio</th>
+                       <th>Poliza de seguro</th>
+                        <th>Tarjeta de circulación</th>
                        <th>Editar</th>
                        <th>Estatus</th>
                      </tr>
@@ -158,6 +168,10 @@
                       <td> <?php echo $row->Modelo; ?></td>
                       <td><?php echo $row->ano; ?>
                       <td><?php echo $row->socionom; ?>
+                      </td>
+                      <td> <a href="<?php echo $row->poliza_seguro; ?>" download="Poliza.pdf"><button type="button" class="btn btn-light px-5">Descargar</button></a>
+                      </td>
+                      <td> <a href="<?php echo $row->tarjeta_circulacion; ?>" download="Tarjeta.pdf"><button type="button" class="btn btn-light px-5">Descargar</button></a>
                       </td>
                       <td><a href="javascript:void();" onclick="editar('<?php echo $row->Placas; ?>','<?php echo $row->NumUnidad; ?>','<?php echo $row->Marca; ?>','<?php echo $row->Modelo; ?>','<?php echo $row->ano; ?>','<?php echo $row->id_socio_fk; ?>','<?php echo $row->Estatus; ?>','<?php echo $row->Id_unidad; ?>')"><i class="zmdi zmdi-brush"></i> <span>Editar</span></a>
                       </td>
@@ -394,6 +408,7 @@ function BuscarTexto(){
   document.getElementById('Marca').value="";
   document.getElementById('Modelo').value="";
   document.getElementById('Ano').value="";
+  
   document.getElementById('select-driver-change').value="0";
   document.getElementById('user-checkbox1').checked=true;
   
@@ -415,6 +430,7 @@ function editar(Placas,NumUnidad,Marca,Modelo,ano,idsocio,estatus,idunidad){
   document.getElementById('Modelo').value=Modelo;
   document.getElementById('select-driver-change').value=idsocio;
   document.getElementById('Ano').value=ano;
+  
   document.getElementById('user-checkbox1').checked=estatus;
   if(estatus=="ACTIVADO")
   {

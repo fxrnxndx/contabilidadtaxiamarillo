@@ -517,11 +517,17 @@ class Home extends BaseController
 		$idempresa = "1";
 		$idsocio = $_POST['idsocio'];
 		$ano = $_POST['ano'];
+		$uploaddir = '././assets/polizas/';
+		$uploaddirtarjeta = '././assets/tarjetas/';
+		$uploadfile = $uploaddir . basename($_FILES['poliza']['name']);
+		$poliza_seguro=base_url().'assets/polizas/'.$numunidad.'.pdf';
+		$tarjeta_circulacion=base_url().'assets/tarjetas/'.$numunidad.'.pdf';
 		if (isset($_POST['estatus'])) {
 			$estatus = "ACTIVADO";
 		} else {
 			$estatus = "DESACTIVADO";
 		}
+		
 
 		if ($idunidad == "0") {  //revisar que el chofer no exista
 			$dataExistencia = array(
@@ -529,8 +535,13 @@ class Home extends BaseController
 			);
 			if ($dataExistencia['existencia'] == false) {
 				if ($idempresa > 0 && $idsocio > 0) {
+					if (move_uploaded_file($_FILES['poliza']['tmp_name'], $uploaddir.$numunidad.'.pdf') or move_uploaded_file($_FILES['tarjeta']['tmp_name'], $uploaddirtarjeta.$numunidad.'.pdf')) {
+ 		   				echo "Archivo subido correctamente.\n";
+					} else {
+    					echo "Fallo al subir el archivo!\n";
+					}
 
-					$this->model->AgregarUnidad($placas, $marca, $modelo, $ano, $idsocio, $idempresa, $estatus, $numunidad);
+					$this->model->AgregarUnidad($placas, $marca, $modelo, $ano, $idsocio, $idempresa, $estatus, $numunidad,$poliza_seguro,$tarjeta_circulacion);
 
 					$this->session->set('NOTIFICACION', '2');
 					return redirect()->to(base_url("Home/unidad"));
@@ -552,10 +563,28 @@ class Home extends BaseController
 
 			if ($idempresa > 0 && $idsocio > 0) {
 
-				$this->model->ActualizarUnidad($placas, $marca, $modelo, $ano, $idsocio, $idempresa, $estatus, $numunidad, $idunidad);
 
-				$this->session->set('NOTIFICACION', '4');
-				return redirect()->to(base_url("Home/unidad"));
+				 if(isset($_FILES['poliza']['name']) and isset($_FILES['tarjeta']['name'])){
+					
+						move_uploaded_file($_FILES['poliza']['tmp_name'], $uploaddir.$numunidad.'.pdf');
+						move_uploaded_file($_FILES['tarjeta']['tmp_name'], $uploaddirtarjeta.$numunidad.'.pdf');
+					$this->model->ActualizarUnidad3($placas, $marca, $modelo, $ano, $idsocio, $idempresa, $estatus, $numunidad, $idunidad,$poliza_seguro,$tarjeta_circulacion);
+					$this->session->set('NOTIFICACION', '4');
+					return redirect()->to(base_url("Home/unidad"));
+
+				}
+				
+				
+				
+				else
+				{
+					$this->model->ActualizarUnidad1($placas, $marca, $modelo, $ano, $idsocio, $idempresa, $estatus, $numunidad, $idunidad);
+
+					$this->session->set('NOTIFICACION', '4');
+					return redirect()->to(base_url("Home/unidad"));
+
+				}
+				
 
 
 			} else {
@@ -677,11 +706,13 @@ class Home extends BaseController
 		$spreadsheet = new Spreadsheet();
 		$reader = \PhpOffice\PhpSpreadsheet\IOFactory::createReader("Xlsx");
 		$tipo_busqueda = $_POST['busqueda'];
-		$empresa = $_POST['empresa'];
+		//$empresa = $_POST['empresa'];
+		$empresa =1;
 		$fecha_inicial = $_POST['fechainicial'];
 		$hora_inicial = $_POST['HoraInicial'];
 		$fecha_final = $_POST['fechafinal'];
 		$hora_final = $_POST['HoraFinal'];
+		$chofer=0;
 		if (isset($_POST['chofer'])) {
 			$chofer = $_POST['chofer'];
 		}
@@ -718,7 +749,8 @@ class Home extends BaseController
 						$hojaActiva->setCellValue('C' . $filainicial, $row->destino);
 						$hojaActiva->setCellValue('D' . $filainicial, $row->vendedornom);
 						$hojaActiva->setCellValue('E' . $filainicial, $row->chofernom);
-						$hojaActiva->setCellValue('G' . $filainicial, $row->factura);
+						$hojaActiva->setCellValue('F' . $filainicial, $row->NumUnidad);
+						$hojaActiva->setCellValue('H' . $filainicial, $row->factura);
 						/*if($row->id_moneda_fk==2)
 						{
 							$hojaActiva->setCellValue('F'.$filainicial,'$'.$row->total*$row->cambio);
@@ -729,7 +761,7 @@ class Home extends BaseController
 						  $hojaActiva->setCellValue('F'.$filainicial,'$'.$row->total);
 						  $total=$row->total+$total;
 						}*/
-						$hojaActiva->setCellValue('F' . $filainicial, '$' . $row->totalMXN);
+						$hojaActiva->setCellValue('G' . $filainicial, '$' . $row->totalMXN);
 						$total = $row->totalMXN + $total;
 
 						$filainicial++;
@@ -738,15 +770,15 @@ class Home extends BaseController
 					}
 				}
 				if ($empresa == 1) {
-					$hojaActiva->setCellValue('A6', 'T.T.E.');
+					$hojaActiva->setCellValue('A6', 'T.T.');
 				}
 				if ($empresa == 2) {
 					$hojaActiva->setCellValue('A6', 'S.A.A.T.');
 				}
 				$socia = $total / 2;
 				$hojaActiva->setCellValue('H6', '$' . $total . 'm.n.');
-				$hojaActiva->setCellValue('H14', '$' . $socia);
-				$hojaActiva->setCellValue('H22', '$' . $socia);
+				//$hojaActiva->setCellValue('H14', '$' . $socia);
+				//$hojaActiva->setCellValue('H22', '$' . $socia);
 				$w = new Xlsx($spreadsheet);
 				$w->save("R.Empresa.xlsx");
 				header("Content-disposition: attachment; filename=R.Empresa.xlsx;Content-type: MIME");
@@ -787,7 +819,7 @@ class Home extends BaseController
 							$hojaActiva->setCellValue('C' . $filainicial, $row->destino);
 							$hojaActiva->setCellValue('D' . $filainicial, $row->numempleado);
 							$hojaActiva->setCellValue('E' . $filainicial, $row->chofernom);
-							$hojaActiva->setCellValue('F' . $filainicial, $row->empresachofernom);
+							$hojaActiva->setCellValue('F' . $filainicial, $row->NumUnidad);
 							/*if($row->id_moneda_fk==2)
 							{
 								$hojaActiva->setCellValue('G'.$filainicial,'$'.$row->total*$row->cambio);
@@ -821,7 +853,7 @@ class Home extends BaseController
 
 							if ($dataBusquedaChoferGanancia1['dataBusquedaChoferGanancia1'] != false) {
 								foreach ($dataBusquedaChoferGanancia1['dataBusquedaChoferGanancia1']->getResult() as $key1) {
-									if ($key1->empresanom == "TTE") {
+									if ($key1->empresanom == "TT") {
 										$totalgananciaEUAtte = ($key1->sumatotal * $key1->tipocambio) + $totalgananciaEUAtte;
 									} else {
 										$totalgananciaEUAsaat = ($key1->sumatotal * $key1->tipocambio) + $totalgananciaEUAsaat;
@@ -841,7 +873,7 @@ class Home extends BaseController
 							}
 							if ($dataBusquedaChoferGanancia2['dataBusquedaChoferGanancia2'] != false) {
 								foreach ($dataBusquedaChoferGanancia2['dataBusquedaChoferGanancia2']->getResult() as $key2) {
-									if ($key2->empresanom == "TTE") {
+									if ($key2->empresanom == "TT") {
 										$totalgananciaMXNtte = $key2->sumatotal + $totalgananciaMXNtte;
 									} else {
 										$totalgananciaMXNsaat = $key2->sumatotal + $totalgananciaMXNsaat;
@@ -858,7 +890,7 @@ class Home extends BaseController
 							if ($dataBusquedaChoferGanancia['dataBusquedaChoferGanancia'] != false) {
 								foreach ($dataBusquedaChoferGanancia['dataBusquedaChoferGanancia']->getResult() as $key3) {
 
-									if ($key3->empresanom == "TTE") {
+									if ($key3->empresanom == "TT") {
 										//$hojaActiva->setCellValue('M'.$filainicial2,'$'.$totalganancia);
 										$hojaActiva->setCellValue('I' . $filainicial2, $key3->numempleado);
 										$hojaActiva->setCellValue('J' . $filainicial2, $key3->chofernom);
@@ -896,7 +928,7 @@ class Home extends BaseController
 
 					}
 					if ($empresa == 1) {
-						$hojaActiva->setCellValue('A6', 'T.T.E.');
+						$hojaActiva->setCellValue('A6', 'T.T.');
 					}
 					if ($empresa == 2) {
 						$hojaActiva->setCellValue('A6', 'S.A.A.T.');
@@ -960,7 +992,7 @@ class Home extends BaseController
 						$filainicial = 8;
 						if ($dataBusquedaChoferGanancia1['dataBusquedaChoferGanancia1'] != false) {
 							foreach ($dataBusquedaChoferGanancia1['dataBusquedaChoferGanancia1']->getResult() as $key1) {
-								if ($key1->empresanom == "TTE") {
+								if ($key1->empresanom == "TT") {
 									$totalgananciaEUAtte = ($key1->sumatotal * $key1->tipocambio) + $totalgananciaEUAtte;
 								} else {
 									$totalgananciaEUAsaat = ($key1->sumatotal * $key1->tipocambio) + $totalgananciaEUAsaat;
@@ -970,7 +1002,7 @@ class Home extends BaseController
 						}
 						if ($dataBusquedaChoferGanancia2['dataBusquedaChoferGanancia2'] != false) {
 							foreach ($dataBusquedaChoferGanancia2['dataBusquedaChoferGanancia2']->getResult() as $key2) {
-								if ($key2->empresanom == "TTE") {
+								if ($key2->empresanom == "TT") {
 									$totalgananciaMXNtte = $key2->sumatotal + $totalgananciaMXNtte;
 								} else {
 									$totalgananciaMXNsaat = $key2->sumatotal + $totalgananciaMXNsaat;
@@ -987,7 +1019,7 @@ class Home extends BaseController
 
 
 
-								if ($row->empresanom == "TTE") {
+								if ($row->empresanom == "TT") {
 									//$hojaActiva->setCellValue('M'.$filainicial2,'$'.$totalganancia);
 									$hojaActiva->setCellValue('I' . $filainicial, $row->numempleado);
 									$hojaActiva->setCellValue('J' . $filainicial, $row->chofernom);
@@ -1023,7 +1055,7 @@ class Home extends BaseController
 
 					}
 					if ($empresa == 1) {
-						$hojaActiva->setCellValue('A6', 'T.T.E.');
+						$hojaActiva->setCellValue('A6', 'T.T.');
 					}
 					if ($empresa == 2) {
 						$hojaActiva->setCellValue('A6', 'S.A.A.T.');

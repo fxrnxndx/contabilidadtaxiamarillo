@@ -114,8 +114,10 @@
             <label for="input-1">Porcentaje de ganancia de los viajes</label>
             <input type="text" class="form-control" id="Porcentaje" name="ganancia" placeholder="Ingresar porcentaje" required>
            </div>
+          
+
+          
            <div class="icheck-material-white">
-           
             <input type="checkbox"  id="user-checkbox1" checked name="estatus" />
             <label for="user-checkbox1">Activar / Desactivar</label>
             </div>

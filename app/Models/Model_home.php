@@ -245,9 +245,9 @@ else
    return false;
  }
 }
-function AgregarUnidad($placas,$marca,$modelo,$ano,$idsocio,$idempresa,$estatus,$numunidad){
-  $sql = "INSERT INTO tbl_unidad (Placas,Marca,Modelo,NumUnidad,ano,id_empresa_fk,id_socio_fk,Estatus) 
-          VALUES ('{$placas}','{$marca}','{$modelo}','{$numunidad}','{$ano}','{$idempresa}','{$idsocio}','{$estatus}')";
+function AgregarUnidad($placas,$marca,$modelo,$ano,$idsocio,$idempresa,$estatus,$numunidad,$poliza,$tarjeta){
+  $sql = "INSERT INTO tbl_unidad (Placas,Marca,Modelo,NumUnidad,ano,id_empresa_fk,id_socio_fk,Estatus,poliza_seguro,tarjeta_circulacion) 
+          VALUES ('{$placas}','{$marca}','{$modelo}','{$numunidad}','{$ano}','{$idempresa}','{$idsocio}','{$estatus}','{$poliza}','{$tarjeta}')";
   $query= $this->db->query($sql);
   
    if($query)
@@ -260,12 +260,79 @@ else
  }
 }
 
-function ActualizarUnidad($placas,$marca,$modelo,$ano,$idsocio,$idempresa,$estatus,$numunidad,$idunidad){
+function ActualizarUnidad($placas,$marca,$modelo,$ano,$idsocio,$idempresa,$estatus,$numunidad,$idunidad,$poliza){
+  $sql = "UPDATE tbl_unidad SET Placas='{$placas}',
+  Marca='{$marca}',
+  Modelo='{$modelo}',
+  ano='{$ano}',
+  poliza_seguro='{$poliza}',
+  NumUnidad='{$numunidad}',
+  id_empresa_fk='{$idempresa}',
+  id_socio_fk='{$idsocio}',
+  Estatus='{$estatus}' 
+  WHERE Id_unidad='{$idunidad}'";
+  $query= $this->db->query($sql);
+  
+   if($query)
+ {
+   return $query;
+ }
+else
+ {
+   return false;
+ }
+}
+function ActualizarUnidad1($placas,$marca,$modelo,$ano,$idsocio,$idempresa,$estatus,$numunidad,$idunidad){
   $sql = "UPDATE tbl_unidad SET Placas='{$placas}',
   Marca='{$marca}',
   Modelo='{$modelo}',
   ano='{$ano}',
   NumUnidad='{$numunidad}',
+  id_empresa_fk='{$idempresa}',
+  id_socio_fk='{$idsocio}',
+  Estatus='{$estatus}' 
+  WHERE Id_unidad='{$idunidad}'";
+  $query= $this->db->query($sql);
+  
+   if($query)
+ {
+   return $query;
+ }
+else
+ {
+   return false;
+ }
+}
+function ActualizarUnidad2($placas,$marca,$modelo,$ano,$idsocio,$idempresa,$estatus,$numunidad,$idunidad,$tarjeta){
+  $sql = "UPDATE tbl_unidad SET Placas='{$placas}',
+  Marca='{$marca}',
+  Modelo='{$modelo}',
+  ano='{$ano}',
+  NumUnidad='{$numunidad}',
+  tarjeta_circulacion='{$tarjeta}',
+  id_empresa_fk='{$idempresa}',
+  id_socio_fk='{$idsocio}',
+  Estatus='{$estatus}' 
+  WHERE Id_unidad='{$idunidad}'";
+  $query= $this->db->query($sql);
+  
+   if($query)
+ {
+   return $query;
+ }
+else
+ {
+   return false;
+ }
+}
+function ActualizarUnidad3($placas,$marca,$modelo,$ano,$idsocio,$idempresa,$estatus,$numunidad,$idunidad,$poliza,$tarjeta){
+  $sql = "UPDATE tbl_unidad SET Placas='{$placas}',
+  Marca='{$marca}',
+  Modelo='{$modelo}',
+  ano='{$ano}',
+  NumUnidad='{$numunidad}',
+  tarjeta_circulacion='{$tarjeta}',
+  poliza_seguro='{$poliza}',
   id_empresa_fk='{$idempresa}',
   id_socio_fk='{$idsocio}',
   Estatus='{$estatus}' 
@@ -587,10 +654,12 @@ function ReporteVentaEmpresa($empresa,$fechainicio,$fechafinal){
   $sql = "SELECT venta.* ,
  empresa.nombre as empresanom, 
  chofer.nombre as chofernom, 
+ unidad.NumUnidad as NumUnidad, 
  vendedor.nombre as vendedornom,
  (select cambio.valor from tbl_tipo_cambio as cambio) as cambio
   FROM tbl_ventas as venta
   INNER JOIN tbl_chofer as chofer ON venta.id_chofer_fk = chofer.numero_empleado 
+   INNER JOIN tbl_unidad as unidad ON venta.num_unidad_fk = unidad.NumUnidad  
   INNER JOIN tbl_empresa as empresa ON venta.id_empresa_fk=empresa.id_empresa
   INNER JOIN tbl_vendedor as vendedor ON venta.id_vendedor_fk=vendedor.id_vendedor
   WHERE  venta.id_empresa_fk={$empresa} and venta.estatus='VENDIDO' and  venta.fecha_venta BETWEEN '{$fechainicio}' AND '{$fechafinal}' ORDER BY id_ventas ASC ";
@@ -610,11 +679,13 @@ function ReporteVentaChoferes($empresa,$fechainicio,$fechafinal){
   venta.* , 
   empresa.nombre as empresachofernom,
   chofer.nombre as chofernom, 
+  unidad.NumUnidad as NumUnidad, 
   chofer.numero_empleado as numempleado,
   vendedor.nombre as vendedornom,
   (select cambio.valor from tbl_tipo_cambio as cambio) as cambio
   FROM tbl_ventas as venta
   INNER JOIN tbl_chofer as chofer ON venta.id_chofer_fk = chofer.numero_empleado  
+  INNER JOIN tbl_unidad as unidad ON venta.num_unidad_fk = unidad.NumUnidad  
   INNER JOIN tbl_empresa as empresa ON venta.id_empresa_fk=empresa.id_empresa
   INNER JOIN tbl_vendedor as vendedor ON venta.id_vendedor_fk=vendedor.id_vendedor
   WHERE  chofer.id_empresa_fk={$empresa} and venta.estatus='VENDIDO' and venta.fecha_venta BETWEEN '{$fechainicio}' AND '{$fechafinal}' ORDER BY id_ventas ASC ";

@@ -41,6 +41,7 @@
               <option value="1">Empresa</option>
               <option value="2">Chofer</option>
               <option value="3">Vendedor</option>
+             
               
             </select>
            </div>
@@ -56,15 +57,7 @@
 <!--INICIO BUSCADOR -->
 <div class="card col-4">
       <div class="card-content">
-          <div class="row row-group m-0">
-          <div class="form-group ">
-            <label for="input-1">Empresa</label>
-            <select class="form-control" aria-label="Default select example" id="Empresa" name="empresa" required>
-              
-              <option value="1">T.T</option>
-            </select>
-           </div>
-          </div>
+          
          
           <div class="form-group " id="choferes">
             
