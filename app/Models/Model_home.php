@@ -653,13 +653,15 @@ else
 function ReporteVentaEmpresa($empresa,$fechainicio,$fechafinal){
   $sql = "SELECT venta.* ,
  empresa.nombre as empresanom, 
+ punto.punto_venta as nompunto, 
  chofer.nombre as chofernom, 
  unidad.NumUnidad as NumUnidad, 
  vendedor.nombre as vendedornom,
  (select cambio.valor from tbl_tipo_cambio as cambio) as cambio
   FROM tbl_ventas as venta
   INNER JOIN tbl_chofer as chofer ON venta.id_chofer_fk = chofer.numero_empleado 
-   INNER JOIN tbl_unidad as unidad ON venta.num_unidad_fk = unidad.NumUnidad  
+  INNER JOIN tbl_punto_venta as punto ON venta.punto_venta = punto.id_punto_venta 
+   INNER JOIN tbl_unidad as unidad ON venta.id_unidad_fk = unidad.NumUnidad  
   INNER JOIN tbl_empresa as empresa ON venta.id_empresa_fk=empresa.id_empresa
   INNER JOIN tbl_vendedor as vendedor ON venta.id_vendedor_fk=vendedor.id_vendedor
   WHERE  venta.id_empresa_fk={$empresa} and venta.estatus='VENDIDO' and  venta.fecha_venta BETWEEN '{$fechainicio}' AND '{$fechafinal}' ORDER BY id_ventas ASC ";
@@ -685,7 +687,7 @@ function ReporteVentaChoferes($empresa,$fechainicio,$fechafinal){
   (select cambio.valor from tbl_tipo_cambio as cambio) as cambio
   FROM tbl_ventas as venta
   INNER JOIN tbl_chofer as chofer ON venta.id_chofer_fk = chofer.numero_empleado  
-  INNER JOIN tbl_unidad as unidad ON venta.num_unidad_fk = unidad.NumUnidad  
+  INNER JOIN tbl_unidad as unidad ON venta.id_unidad_fk = unidad.NumUnidad  
   INNER JOIN tbl_empresa as empresa ON venta.id_empresa_fk=empresa.id_empresa
   INNER JOIN tbl_vendedor as vendedor ON venta.id_vendedor_fk=vendedor.id_vendedor
   WHERE  chofer.id_empresa_fk={$empresa} and venta.estatus='VENDIDO' and venta.fecha_venta BETWEEN '{$fechainicio}' AND '{$fechafinal}' ORDER BY id_ventas ASC ";
@@ -726,6 +728,8 @@ function ReporteVentaChoferesGanancia($empresa,$fechainicio,$fechafinal,$chofer)
   SUM(venta.total)/100 *(chofer.porcentaje_ganancia) as totalganancia ,
   empresa.nombre as empresanom, 
   chofer.nombre as chofernom,
+  COUNT(venta.id_ventas) as cantidadTicket,
+  COUNT(DISTINCT DATE(venta.fecha_venta)) AS dias_con_ventas,
   chofer.numero_empleado as numempleado,
   chofer.porcentaje_ganancia as choferganancia,
   (SELECT valor FROM tbl_tipo_cambio) as tipocambio,
@@ -905,8 +909,6 @@ else
 function ReporteVentaVendedorGanancia($empresa,$fechainicio,$fechafinal){
   $sql = "SELECT venta.* , 
   SUM(venta.totalMXN) as sumatotal, 
-
-  
   SUM(venta.total)/100 *(vendedor.porcentaje_ganancia) as totalganancia   ,
   empresa.nombre as empresanom,
   vendedor.nombre as vendedornom,
@@ -928,6 +930,139 @@ else
    return false;
  }
 }
+function ReporteVentaVendedorBandera($vendedorid,$fechainicio,$fechafinal){
+  $sql = "SELECT venta.* , 
+   COUNT(venta.id_ventas) as cantidadTicket,
+   COUNT(DISTINCT DATE(venta.fecha_venta)) AS dias_con_ventas,
+  SUM(venta.totalMXN) as sumatotal, 
+  SUM(venta.total)/100 *(tbl_punto_venta.porcentaje) as totalganancia  ,
+  empresa.nombre as empresanom,
+  tbl_punto_venta.porcentaje as comision,
+  vendedor.nombre as vendedornom,
+  (SELECT valor FROM tbl_tipo_cambio) as tipocambio,  
+  vendedor.porcentaje_ganancia as vendedorganancia
+  FROM tbl_ventas as venta
+  INNER JOIN tbl_empresa as empresa ON venta.id_empresa_fk=empresa.id_empresa
+   INNER JOIN tbl_punto_venta as tbl_punto_venta ON venta.punto_venta=tbl_punto_venta.id_punto_venta
+  INNER JOIN tbl_vendedor as vendedor ON venta.id_vendedor_fk=vendedor.id_vendedor
+  WHERE  venta.id_vendedor_fk={$vendedorid} and venta.punto_venta=2 and venta.estatus='VENDIDO' and venta.fecha_venta BETWEEN '{$fechainicio}' AND '{$fechafinal}' GROUP BY id_vendedor_fk
+  ";
+  $query= $this->db->query($sql);
+  
+   if($query->getresultArray())
+ {
+   return $query;
+ }
+else
+ {
+   return false;
+ }
+}
+function ReporteVentaVendedorRampa($vendedorid,$fechainicio,$fechafinal){
+  $sql = "SELECT venta.* , 
+   COUNT(venta.id_ventas) as cantidadTicket,
+   COUNT(DISTINCT DATE(venta.fecha_venta)) AS dias_con_ventas,
+  SUM(venta.totalMXN) as sumatotal, 
+  SUM(venta.total)/100 *(vendedor.porcentaje_ganancia) as totalganancia,
+  empresa.nombre as empresanom,
+  tbl_punto_venta.porcentaje as comision,
+  vendedor.nombre as vendedornom,
+  (SELECT valor FROM tbl_tipo_cambio) as tipocambio,  
+  vendedor.porcentaje_ganancia as vendedorganancia
+  FROM tbl_ventas as venta
+  INNER JOIN tbl_empresa as empresa ON venta.id_empresa_fk=empresa.id_empresa
+   INNER JOIN tbl_punto_venta as tbl_punto_venta ON venta.punto_venta=tbl_punto_venta.id_punto_venta
+  INNER JOIN tbl_vendedor as vendedor ON venta.id_vendedor_fk=vendedor.id_vendedor
+  WHERE  venta.id_vendedor_fk={$vendedorid} and venta.punto_venta=3 and venta.estatus='VENDIDO' and venta.fecha_venta BETWEEN '{$fechainicio}' AND '{$fechafinal}' GROUP BY id_vendedor_fk
+  ";
+  $query= $this->db->query($sql);
+  
+   if($query->getresultArray())
+ {
+   return $query;
+ }
+else
+ {
+   return false;
+ }
+}
+function ReporteVentaVendedorVelador($vendedorid,$fechainicio,$fechafinal){
+  $sql = "SELECT venta.* , 
+   COUNT(venta.id_ventas) as cantidadTicket,
+   COUNT(DISTINCT DATE(venta.fecha_venta)) AS dias_con_ventas,
+  SUM(venta.totalMXN) as sumatotal, 
+  SUM(venta.total)/100 *(vendedor.porcentaje_ganancia) as totalganancia   ,
+  empresa.nombre as empresanom,
+  tbl_punto_venta.porcentaje as comision,
+  vendedor.nombre as vendedornom,
+  (SELECT valor FROM tbl_tipo_cambio) as tipocambio,  
+  vendedor.porcentaje_ganancia as vendedorganancia
+  FROM tbl_ventas as venta
+  INNER JOIN tbl_empresa as empresa ON venta.id_empresa_fk=empresa.id_empresa
+   INNER JOIN tbl_punto_venta as tbl_punto_venta ON venta.punto_venta=tbl_punto_venta.id_punto_venta
+  INNER JOIN tbl_vendedor as vendedor ON venta.id_vendedor_fk=vendedor.id_vendedor
+  WHERE  venta.id_vendedor_fk={$vendedorid} and venta.punto_venta=4 and venta.estatus='VENDIDO' and venta.fecha_venta BETWEEN '{$fechainicio}' AND '{$fechafinal}' GROUP BY id_vendedor_fk
+  ";
+  $query= $this->db->query($sql);
+  
+   if($query->getresultArray())
+ {
+   return $query;
+ }
+else
+ {
+   return false;
+ }
+}
+function ReporteVentaVendedorM5($vendedorid,$fechainicio,$fechafinal){
+  $sql = "SELECT venta.* , 
+   COUNT(venta.id_ventas) as cantidadTicket,
+   COUNT(DISTINCT DATE(venta.fecha_venta)) AS dias_con_ventas,
+  SUM(venta.totalMXN) as sumatotal, 
+  SUM(venta.total)/100 *(vendedor.porcentaje_ganancia) as totalganancia   ,
+  empresa.nombre as empresanom,
+  tbl_punto_venta.porcentaje as comision,
+  vendedor.nombre as vendedornom,
+  (SELECT valor FROM tbl_tipo_cambio) as tipocambio,  
+  vendedor.porcentaje_ganancia as vendedorganancia
+  FROM tbl_ventas as venta
+  INNER JOIN tbl_empresa as empresa ON venta.id_empresa_fk=empresa.id_empresa
+   INNER JOIN tbl_punto_venta as tbl_punto_venta ON venta.punto_venta=tbl_punto_venta.id_punto_venta
+  INNER JOIN tbl_vendedor as vendedor ON venta.id_vendedor_fk=vendedor.id_vendedor
+  WHERE  venta.id_vendedor_fk={$vendedorid} and venta.punto_venta=1 and venta.estatus='VENDIDO' and venta.fecha_venta BETWEEN '{$fechainicio}' AND '{$fechafinal}' GROUP BY id_vendedor_fk
+  ";
+  $query= $this->db->query($sql);
+  
+   if($query->getresultArray())
+ {
+   return $query;
+ }
+else
+ {
+   return false;
+ }
+}
+function TodosVendedoresReporte($fechainicio,$fechafinal){
+  $sql = "SELECT venta.*, vendedor.*
+  FROM tbl_ventas as venta
+  INNER JOIN tbl_vendedor as vendedor ON venta.id_vendedor_fk=vendedor.id_vendedor
+   WHERE venta.estatus='VENDIDO' and venta.fecha_venta BETWEEN '{$fechainicio}' AND '{$fechafinal}' GROUP BY id_vendedor_fk ASC ";
+  $query= $this->db->query($sql);
+  
+   if($query->getresultArray())
+ {
+   return $query;
+ }
+else
+ {
+   return false;
+ }
+}
+
+
+
+
+
 function ReporteVentaVendedorGanancia1($empresa,$fechainicio,$fechafinal){
   $sql = "SELECT venta.* , 
   SUM(venta.total) as sumatotal, 

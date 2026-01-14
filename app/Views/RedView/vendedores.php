@@ -80,8 +80,7 @@
             <label for="input-1">Empresa</label>
             <select class="form-control" aria-label="Default select example" id="Empresa" name="empresa" required>
               <option selected value="0">Seleccione una empresa</option>
-              <option value="1">T.T.E</option>
-              <option value="2">S.A.A.T</option>
+              <option value="1">T.T.</option>
             </select>
            </div>
            <div class="form-group">

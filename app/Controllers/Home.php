@@ -51,7 +51,7 @@ class Home extends BaseController
 		//$this->load->model('Model_home');
 		$this->model = new \App\Models\Model_home();
 		$this->modelClientes = new \App\Models\Model_Clientes();
-		$this->modelReservaciones = new \App\Models\Model_Reservaciones();
+		$this->modelReservaciones = new \App\Models\Model_reservaciones();
 	}
 
 	public function prueba()
@@ -751,6 +751,7 @@ class Home extends BaseController
 						$hojaActiva->setCellValue('E' . $filainicial, $row->chofernom);
 						$hojaActiva->setCellValue('F' . $filainicial, $row->NumUnidad);
 						$hojaActiva->setCellValue('H' . $filainicial, $row->factura);
+						$hojaActiva->setCellValue('I' . $filainicial, $row->nompunto);
 						/*if($row->id_moneda_fk==2)
 						{
 							$hojaActiva->setCellValue('F'.$filainicial,'$'.$row->total*$row->cambio);
@@ -841,14 +842,14 @@ class Home extends BaseController
 
 
 							$dataBusquedaChoferGanancia = array(
-								'dataBusquedaChoferGanancia' => $this->model->ReporteVentaChoferesGanancia($empresa, $fecha_inicial, $fecha_final, $key->id_chofer)
+								'dataBusquedaChoferGanancia' => $this->model->ReporteVentaChoferesGanancia($empresa, $fecha_inicial, $fecha_final, $key->numero_empleado)
 							);
 
 							$dataBusquedaChoferGanancia1 = array(
-								'dataBusquedaChoferGanancia1' => $this->model->ReporteVentaChoferesGanancia1($empresa, $fecha_inicial, $fecha_final, $key->id_chofer)
+								'dataBusquedaChoferGanancia1' => $this->model->ReporteVentaChoferesGanancia1($empresa, $fecha_inicial, $fecha_final, $key->numero_empleado)
 							);
 							$dataBusquedaChoferGanancia2 = array(
-								'dataBusquedaChoferGanancia2' => $this->model->ReporteVentaChoferesGanancia2($empresa, $fecha_inicial, $fecha_final, $key->id_chofer)
+								'dataBusquedaChoferGanancia2' => $this->model->ReporteVentaChoferesGanancia2($empresa, $fecha_inicial, $fecha_final, $key->numero_empleado)
 							);
 
 							if ($dataBusquedaChoferGanancia1['dataBusquedaChoferGanancia1'] != false) {
@@ -897,7 +898,8 @@ class Home extends BaseController
 										$hojaActiva->setCellValue('L' . $filainicial2, $key3->choferganancia);
 										//$hojaActiva->setCellValue('K'.$filainicial2,'$'.$totalgananciatte);
 										$hojaActiva->setCellValue('K' . $filainicial2, '$' . $key3->sumatotal);
-										$hojaActiva->setCellValue('N' . $filainicial2, $key3->empresanom);
+										$hojaActiva->setCellValue('N' . $filainicial2, $key3->cantidadTicket);
+										$hojaActiva->setCellValue('O' . $filainicial2, $key3->dias_con_ventas);
 
 									} else {
 										//$hojaActiva->setCellValue('M'.$filainicial2,'$'.$totalganancia);
@@ -1073,6 +1075,11 @@ class Home extends BaseController
 			} else if ($tipo_busqueda == 3) {
 
 				$filainicial = 8;
+				$filainicialBandera = 8;
+				$filainicialRampa = 8;
+				$filainicialVelador = 8;
+				$filainicialM5 = 8;
+				$filainicialNombre = 7;
 				$total = 0;
 				$totalgananciaEUAsaat = 0;
 				$totalgananciaEUAtte = 0;
@@ -1083,6 +1090,9 @@ class Home extends BaseController
 				$spreadsheet = $reader->load("ReporteVendedores.xlsx");
 				$spreadsheet->setActiveSheetIndex(0);
 				$hojaActiva = $spreadsheet->getActiveSheet();
+				//$hoja2 = new \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet($spreadsheet, 'Detalles');
+				//$spreadsheet->addSheet($hoja2, 1);
+				$hoja2 = $spreadsheet->setActiveSheetIndex(1);
 
 				$dataBusquedaVendedores = array(
 					'dataBusquedaVendedores' => $this->model->ReporteVentaVendedores($empresa, $fecha_inicial, $fecha_final)
@@ -1097,6 +1107,15 @@ class Home extends BaseController
 				$dataBusquedaVendedorGanancia2 = array(
 					'dataBusquedaVendedorGanancia2' => $this->model->ReporteVentaVendedorGanancia2($empresa, $fecha_inicial, $fecha_final)
 				);
+				
+				
+				
+			
+				$dataTodosVendedoresReporte = array(
+					'dataTodosVendedoresReporte' => $this->model->TodosVendedoresReporte($fecha_inicial, $fecha_final)
+				);
+
+
 
 				if ($dataBusquedaVendedores['dataBusquedaVendedores'] == false && $dataBusquedaVendedorGanancia['dataBusquedaVendedorGanancia'] == false) {
 					$this->session->set('NOTIFICACION', '2');
@@ -1131,7 +1150,7 @@ class Home extends BaseController
 
 					if ($dataBusquedaVendedorGanancia1['dataBusquedaVendedorGanancia1'] != false) {
 						foreach ($dataBusquedaVendedorGanancia1['dataBusquedaVendedorGanancia1']->getResult() as $key1) {
-							if ($key1->empresanom == "TTE") {
+							if ($key1->empresanom == "TT") {
 								$totalgananciaEUAtte = ($key1->sumatotal * $key1->tipocambio) + $totalgananciaEUAtte;
 							} else {
 								$totalgananciaEUAsaat = ($key1->sumatotal * $key1->tipocambio) + $totalgananciaEUAsaat;
@@ -1141,7 +1160,7 @@ class Home extends BaseController
 					}
 					if ($dataBusquedaVendedorGanancia2['dataBusquedaVendedorGanancia2'] != false) {
 						foreach ($dataBusquedaVendedorGanancia2['dataBusquedaVendedorGanancia2']->getResult() as $key2) {
-							if ($key2->empresanom == "TTE") {
+							if ($key2->empresanom == "TT") {
 								$totalgananciaMXNtte = $key2->sumatotal + $totalgananciaMXNtte;
 							} else {
 								$totalgananciaMXNsaat = $key2->sumatotal + $totalgananciaMXNsaat;
@@ -1154,43 +1173,249 @@ class Home extends BaseController
 					$totalgananciatte = $totalgananciaEUAtte + $totalgananciaMXNtte;
 					$totalgananciasaat = $totalgananciaEUAsaat + $totalgananciaMXNsaat;
 
-					foreach ($dataBusquedaVendedorGanancia['dataBusquedaVendedorGanancia']->getResult() as $row) {
+					/*foreach ($dataBusquedaVendedorGanancia['dataBusquedaVendedorGanancia']->getResult() as $row) {
 
 
-						if ($row->empresanom == "TTE") {
+						if ($row->empresanom == "TT") {
 
 							// $hojaActiva->setCellValue('H'.$filainicial,$totalgananciatte);
-							$hojaActiva->setCellValue('H' . $filainicial, $row->sumatotal);
-							$hojaActiva->setCellValue('I' . $filainicial, $row->vendedorganancia);
+							$hoja2->setCellValue('B' . $filainicial, $row->sumatotal);
+							$hoja2->setCellValue('C' . $filainicial, $row->vendedorganancia);
 							// $hojaActiva->setCellValue('J'.$filainicial,'$'.$totalgananciatte);
-							$hojaActiva->setCellValue('G' . $filainicial, $row->vendedornom);
+							$hoja2->setCellValue('A' . $filainicial, $row->vendedornom);
+							// $hojaActiva->setCellValue('H'.$filainicial,$totalgananciatte);
+						
+
 
 						} else {
 
 							//$hojaActiva->setCellValue('H'.$filainicial,$totalgananciasaat);
-							$hojaActiva->setCellValue('H' . $filainicial, $row->sumatotal);
-							$hojaActiva->setCellValue('I' . $filainicial, $row->vendedorganancia);
+							$hoja2->setCellValue('H' . $filainicial, $row->sumatotal);
+							$hoja2->setCellValue('I' . $filainicial, $row->vendedorganancia);
 							//$hojaActiva->setCellValue('J'.$filainicial,'$'.$totalgananciasaat);
-							$hojaActiva->setCellValue('G' . $filainicial, $row->vendedornom);
+							$hoja2->setCellValue('G' . $filainicial, $row->vendedornom);
 
 						}
 
 
 						$filainicial++;
 
+					}*/
+					foreach ($dataTodosVendedoresReporte['dataTodosVendedoresReporte']->getResult() as $fila) {
+							$hoja2->setCellValue('A' . $filainicialNombre, $fila->nombre);
+							$dataBusquedaVendedorBandera = array(
+							'dataBusquedaVendedorBandera' => $this->model->ReporteVentaVendedorBandera($fila->id_vendedor, $fecha_inicial, $fecha_final)
+							);
+						if ($dataBusquedaVendedorBandera['dataBusquedaVendedorBandera'] != false) {
+								foreach ($dataBusquedaVendedorBandera['dataBusquedaVendedorBandera']->getResult() as $row) {
+
+							$hoja2->setCellValue('B' . $filainicialBandera-1,"BANDERA");
+							$hoja2->setCellValue('A' . $filainicialBandera,"Tickets");
+							$hoja2->setCellValue('A' . $filainicialBandera+1, "Dias trabajados");	
+							$hoja2->setCellValue('A' . $filainicialBandera+2, "Total vendido");
+							$hoja2->setCellValue('A' . $filainicialBandera+3, "Comisiones");
+							$hoja2->setCellValue('A' . $filainicialBandera+4, "Total");
+							$hoja2->setCellValue('A' . $filainicialBandera-1, $row->vendedornom);
+							$hoja2->setCellValue('B' . $filainicialBandera, $row->cantidadTicket);
+							$hoja2->setCellValue('B' . $filainicialBandera+1, $row->dias_con_ventas);	
+							$hoja2->setCellValue('B' . $filainicialBandera+2, $row->sumatotal);
+							$hoja2->setCellValue('B' . $filainicialBandera+3, $row->comision);
+							$hoja2->setCellValue('B' . $filainicialBandera+4, $row->sumatotal/100*$row->comision);							
+					
+							$filainicialBandera=$filainicialBandera+8;
+
+							}
+						}
+						else
+						{
+							$hoja2->setCellValue('B' . $filainicialBandera-1,"BANDERA");
+							$hoja2->setCellValue('A' . $filainicialBandera,"Tickets");
+							$hoja2->setCellValue('A' . $filainicialBandera+1, "Dias trabajados");	
+							$hoja2->setCellValue('A' . $filainicialBandera+2, "Total vendido");
+							$hoja2->setCellValue('A' . $filainicialBandera+3, "Comisiones");
+							$hoja2->setCellValue('A' . $filainicialBandera+4, "Total");
+							$filainicialBandera=$filainicialBandera+8;
+						}
+						$dataBusquedaVendedorRampa = array(
+						'dataBusquedaVendedorRampa' => $this->model->ReporteVentaVendedorRampa($fila->id_vendedor, $fecha_inicial, $fecha_final)
+						);
+						if ($dataBusquedaVendedorRampa['dataBusquedaVendedorRampa'] != false) {
+							foreach ($dataBusquedaVendedorRampa['dataBusquedaVendedorRampa']->getResult() as $row) {
+
+							$hoja2->setCellValue('C' . $filainicialRampa-1,"RAMPA");
+							$hoja2->setCellValue('C' . $filainicialRampa, $row->cantidadTicket);
+							$hoja2->setCellValue('C' . $filainicialRampa+1, $row->dias_con_ventas);	
+							$hoja2->setCellValue('C' . $filainicialRampa+2, $row->sumatotal);
+							$hoja2->setCellValue('C' . $filainicialRampa+3, $row->comision);
+							$hoja2->setCellValue('C' . $filainicialRampa+4, $row->sumatotal/100*$row->comision);		
+						
+					
+							$filainicialRampa=$filainicialRampa+8;
+
+							}
+						}
+						else
+						{
+							$hoja2->setCellValue('C' . $filainicialVelador-1,"RAMPA");
+							
+							$filainicialRampa=$filainicialRampa+8;
+						}
+						$dataBusquedaVendedorVelador = array(
+						'dataBusquedaVendedorVelador' => $this->model->ReporteVentaVendedorVelador($fila->id_vendedor, $fecha_inicial, $fecha_final)
+						);
+						if ($dataBusquedaVendedorVelador['dataBusquedaVendedorVelador'] != false) {
+							foreach ($dataBusquedaVendedorVelador['dataBusquedaVendedorVelador']->getResult() as $row) {
+
+								$hoja2->setCellValue('D' . $filainicialVelador-1,"VELADOR");
+								$hoja2->setCellValue('D' . $filainicialVelador, $row->cantidadTicket);
+								$hoja2->setCellValue('D' . $filainicialVelador+1, $row->dias_con_ventas);	
+								$hoja2->setCellValue('D' . $filainicialVelador+2, $row->sumatotal);
+								$hoja2->setCellValue('D' . $filainicialVelador+3, $row->comision);
+								$hoja2->setCellValue('D' . $filainicialVelador+4, $row->sumatotal/100*$row->comision);	
+						
+					
+								$filainicialVelador=$filainicialVelador+8;
+
+							}
+						}
+						else
+						{
+							$hoja2->setCellValue('D' . $filainicialVelador-1,"VELADOR");
+
+							$filainicialVelador=$filainicialVelador+8;
+						}
+							$dataBusquedaVendedorM5 = array(
+						'dataBusquedaVendedorM5' => $this->model->ReporteVentaVendedorM5($fila->id_vendedor, $fecha_inicial, $fecha_final)
+							);
+						if ($dataBusquedaVendedorM5['dataBusquedaVendedorM5'] != false) {
+							foreach ($dataBusquedaVendedorM5['dataBusquedaVendedorM5']->getResult() as $row) {
+
+								$hoja2->setCellValue('E' . $filainicialM5-1,"MODULO");
+								$hoja2->setCellValue('E' . $filainicialM5, $row->cantidadTicket);
+								$hoja2->setCellValue('E' . $filainicialM5+1, $row->dias_con_ventas);	
+								$hoja2->setCellValue('E' . $filainicialM5+2, $row->sumatotal);
+								$hoja2->setCellValue('E' . $filainicialM5+3, $row->comision);
+								$hoja2->setCellValue('E' . $filainicialM5+4,$row->sumatotal/100*$row->comision);		
+						
+					
+								$filainicialM5=$filainicialM5+8;
+
+							}
+						}
+						else
+						{
+							$hoja2->setCellValue('E' . $filainicialM5-1,"MODULO");
+							$filainicialM5=$filainicialM5+8;
+						}
+
+							
+
+						$filainicialNombre=$filainicialNombre+8;
 					}
+			
+				/*if ($dataBusquedaVendedorBandera['dataBusquedaVendedorBandera'] != false) {
+				foreach ($dataBusquedaVendedorBandera['dataBusquedaVendedorBandera']->getResult() as $row) {
+
+							$hoja2->setCellValue('B' . $filainicialBandera-1,"BANDERA");
+							$hoja2->setCellValue('A' . $filainicialBandera,"Tickets");
+							$hoja2->setCellValue('A' . $filainicialBandera+1, "Dias trabajados");	
+							$hoja2->setCellValue('A' . $filainicialBandera+2, "Total vendido");
+							$hoja2->setCellValue('A' . $filainicialBandera+3, "Comisiones");
+							$hoja2->setCellValue('A' . $filainicialBandera+4, "Total");
+							$hoja2->setCellValue('A' . $filainicialBandera-1, $row->vendedornom);
+							$hoja2->setCellValue('B' . $filainicialBandera, $row->cantidadTicket);
+							$hoja2->setCellValue('B' . $filainicialBandera+1, $row->dias_con_ventas);	
+							$hoja2->setCellValue('B' . $filainicialBandera+2, $row->sumatotal);
+							$hoja2->setCellValue('B' . $filainicialBandera+3, $row->comision);
+							$hoja2->setCellValue('B' . $filainicialBandera+4, $row->sumatotal/100*$row->comision);							
+					
+						$filainicialBandera=$filainicialBandera+8;
+
+					}
+				}
+				else
+				{
+						$hoja2->setCellValue('B' . $filainicialBandera-1,"BANDERA");
+						$hoja2->setCellValue('A' . $filainicialBandera,"Tickets");
+						$hoja2->setCellValue('A' . $filainicialBandera+1, "Dias trabajados");	
+						$hoja2->setCellValue('A' . $filainicialBandera+2, "Total vendido");
+						$hoja2->setCellValue('A' . $filainicialBandera+3, "Comisiones");
+						$hoja2->setCellValue('A' . $filainicialBandera+4, "Total");
+						$filainicialBandera=$filainicialBandera+8;
+				}
+				if ($dataBusquedaVendedorRampa['dataBusquedaVendedorRampa'] != false) {
+				foreach ($dataBusquedaVendedorRampa['dataBusquedaVendedorRampa']->getResult() as $row) {
+
+							$hoja2->setCellValue('C' . $filainicialRampa-1,"RAMPA");
+							$hoja2->setCellValue('C' . $filainicialRampa, $row->cantidadTicket);
+							$hoja2->setCellValue('C' . $filainicialRampa+1, $row->dias_con_ventas);	
+							$hoja2->setCellValue('C' . $filainicialRampa+2, $row->sumatotal);
+							$hoja2->setCellValue('C' . $filainicialRampa+3, $row->comision);
+							$hoja2->setCellValue('C' . $filainicialRampa+4, $row->sumatotal/100*$row->comision);		
+						
+					
+						$filainicialRampa=$filainicialRampa+8;
+
+					}
+				}
+				else
+				{
+					$hoja2->setCellValue('C' . $filainicialVelador-1,"RAMPA");
+					$filainicialRampa=$filainicialRampa+8;
+				}
+				if ($dataBusquedaVendedorVelador['dataBusquedaVendedorVelador'] != false) {
+				foreach ($dataBusquedaVendedorVelador['dataBusquedaVendedorVelador']->getResult() as $row) {
+
+							$hoja2->setCellValue('D' . $filainicialVelador-1,"VELADOR");
+							$hoja2->setCellValue('D' . $filainicialVelador, $row->cantidadTicket);
+							$hoja2->setCellValue('D' . $filainicialVelador+1, $row->dias_con_ventas);	
+							$hoja2->setCellValue('D' . $filainicialVelador+2, $row->sumatotal);
+							$hoja2->setCellValue('D' . $filainicialVelador+3, $row->comision);
+							$hoja2->setCellValue('D' . $filainicialVelador+4, $row->sumatotal/100*$row->comision);	
+						
+					
+						$filainicialVelador=$filainicialVelador+8;
+
+					}
+				}
+				else
+				{
+					$hoja2->setCellValue('D' . $filainicialVelador-1,"VELADOR");
+					$filainicialVelador=$filainicialVelador+8;
+				}
+				if ($dataBusquedaVendedorM5['dataBusquedaVendedorM5'] != false) {
+				foreach ($dataBusquedaVendedorM5['dataBusquedaVendedorM5']->getResult() as $row) {
+
+							$hoja2->setCellValue('E' . $filainicialM5-1,"MODULO");
+							$hoja2->setCellValue('E' . $filainicialM5, $row->cantidadTicket);
+							$hoja2->setCellValue('E' . $filainicialM5+1, $row->dias_con_ventas);	
+							$hoja2->setCellValue('E' . $filainicialM5+2, $row->sumatotal);
+							$hoja2->setCellValue('E' . $filainicialM5+3, $row->comision);
+							$hoja2->setCellValue('E' . $filainicialM5+4,$row->sumatotal/100*$row->comision);		
+						
+					
+						$filainicialM5=$filainicialM5+8;
+
+					}
+				}*/
+
+
+
+
 
 
 
 				}
-				if ($empresa == 1) {
+				/*if ($empresa == 1) {
 					$hojaActiva->setCellValue('A6', 'T.T.E.');
 				}
 				if ($empresa == 2) {
 					$hojaActiva->setCellValue('A6', 'S.A.A.T.');
-				}
+				}*/
 
+				
 
+				$spreadsheet->setActiveSheetIndex(0);
 				$w = new Xlsx($spreadsheet);
 				$w->save("R.Vendedores.xlsx");
 				header("Content-disposition: attachment; filename=R.Vendedores.xlsx;Content-type: MIME");
