@@ -271,7 +271,7 @@ class Home extends BaseController
 
 		} else {//Actualizar datos del vendedor
 			if ($contra == $contra2) {
-				$this->model->ActualizarVendedor($nombre, $apellidos, $ganancia, $empresa, $estatus, $idvendedor);
+				$this->model->ActualizarVendedor($nombre, $apellidos, $ganancia, $empresa, $estatus, $idvendedor,$telefono);
 				$this->model->ActualizarUsuario($usuario, $contra, $estatus);
 				$this->session->set('NOTIFICACION', '4');
 				return redirect()->to(base_url("Home/vendedores"));
@@ -1420,7 +1420,163 @@ class Home extends BaseController
 				$w->save("R.Vendedores.xlsx");
 				header("Content-disposition: attachment; filename=R.Vendedores.xlsx;Content-type: MIME");
 				readfile("R.Vendedores.xlsx");
-			}
+			
+
+			}else if ($tipo_busqueda == 4) {
+				$filainicial = 8;
+				$filainicial2 = 8;
+				$total = 0;
+				$totalgananciaEUAsaat = 0;
+				$totalgananciaEUAtte = 0;
+				$totalgananciaMXNsaat = 0;
+				$totalgananciaMXNtte = 0;
+				$totalgananciatte = 0;
+				$totalgananciasaat = 0;
+				$spreadsheet = $reader->load("ReporteUnidades.xlsx");
+				$spreadsheet->setActiveSheetIndex(0);
+				$hojaActiva = $spreadsheet->getActiveSheet();
+				//Descargar reporte por todos los choferes
+				
+					$ReporteVentaUnidades = array(
+						'ReporteVentaUnidades' => $this->model->ReporteVentaUnidades($empresa, $fecha_inicial, $fecha_final)
+					);
+
+
+
+					if ($ReporteVentaUnidades['ReporteVentaUnidades'] == false) {
+						$this->session->set('NOTIFICACION', '2');
+						return redirect()->to(base_url("Home/reporte"));
+					} else {
+						foreach ($ReporteVentaUnidades['ReporteVentaUnidades']->getResult() as $row) {
+
+							$total = $total + $row->total;
+							$hojaActiva->setCellValue('A' . $filainicial, $row->numero_ticket);
+							$hojaActiva->setCellValue('B' . $filainicial, $row->fecha_venta);
+							$hojaActiva->setCellValue('C' . $filainicial, $row->destino);
+							$hojaActiva->setCellValue('D' . $filainicial, $row->numempleado);
+							$hojaActiva->setCellValue('E' . $filainicial, $row->chofernom);
+							$hojaActiva->setCellValue('F' . $filainicial, $row->NumUnidad);
+							/*if($row->id_moneda_fk==2)
+							{
+								$hojaActiva->setCellValue('G'.$filainicial,'$'.$row->total*$row->cambio);
+							}
+							else{
+								$hojaActiva->setCellValue('G'.$filainicial,'$'.$row->total);
+							} */
+							$hojaActiva->setCellValue('G' . $filainicial, '$' . $row->totalMXN);
+							$filainicial++;
+
+
+						}
+						$BuscarEmpresaUnidad = array(
+							'BuscarEmpresaUnidad' => $this->model->BuscarEmpresaUnidad($empresa)
+						);
+
+						//Recorrer todos los choferes que son de la misma empresa y sacar sus viajes
+						foreach ($BuscarEmpresaUnidad['BuscarEmpresaUnidad']->getResult() as $key) {
+
+
+							$ReporteVentaUnidadesGanancia = array(
+								'ReporteVentaUnidadesGanancia' => $this->model->ReporteVentaUnidadesGanancia($empresa, $fecha_inicial, $fecha_final, $key->NumUnidad)
+							);
+
+							/*$dataBusquedaChoferGanancia1 = array(
+								'dataBusquedaChoferGanancia1' => $this->model->ReporteVentaChoferesGanancia1($empresa, $fecha_inicial, $fecha_final, $key->numero_empleado)
+							);
+							$dataBusquedaChoferGanancia2 = array(
+								'dataBusquedaChoferGanancia2' => $this->model->ReporteVentaChoferesGanancia2($empresa, $fecha_inicial, $fecha_final, $key->numero_empleado)
+							);
+
+							if ($dataBusquedaChoferGanancia1['dataBusquedaChoferGanancia1'] != false) {
+								foreach ($dataBusquedaChoferGanancia1['dataBusquedaChoferGanancia1']->getResult() as $key1) {
+									if ($key1->empresanom == "TT") {
+										$totalgananciaEUAtte = ($key1->sumatotal * $key1->tipocambio) + $totalgananciaEUAtte;
+									} else {
+										$totalgananciaEUAsaat = ($key1->sumatotal * $key1->tipocambio) + $totalgananciaEUAsaat;
+									}
+
+
+									/*
+									$hojaActiva->setCellValue('M'.$filainicial2,'$'.$row2->sumatotal);
+									$hojaActiva->setCellValue('I'.$filainicial2,$row2->numempleado);
+									$hojaActiva->setCellValue('J'.$filainicial2,$row2->chofernom);
+									$hojaActiva->setCellValue('L'.$filainicial2,$row2->choferganancia);
+									$hojaActiva->setCellValue('K'.$filainicial2,'$'.$row2->sumatotal);
+									$hojaActiva->setCellValue('N'.$filainicial2,$row2->empresanom);
+									$filainicial2++;*/
+
+							/*	}
+							}
+							if ($dataBusquedaChoferGanancia2['dataBusquedaChoferGanancia2'] != false) {
+								foreach ($dataBusquedaChoferGanancia2['dataBusquedaChoferGanancia2']->getResult() as $key2) {
+									if ($key2->empresanom == "TT") {
+										$totalgananciaMXNtte = $key2->sumatotal + $totalgananciaMXNtte;
+									} else {
+										$totalgananciaMXNsaat = $key2->sumatotal + $totalgananciaMXNsaat;
+									}
+
+
+
+
+								}
+
+							}
+							$totalgananciatte = $totalgananciaEUAtte + $totalgananciaMXNtte;
+							$totalgananciasaat = $totalgananciaEUAsaat + $totalgananciaMXNsaat;*/
+							if ($ReporteVentaUnidadesGanancia['ReporteVentaUnidadesGanancia'] != false) {
+								foreach ($ReporteVentaUnidadesGanancia['ReporteVentaUnidadesGanancia']->getResult() as $key3) {
+
+									if ($key3->empresanom == "TT") {
+										//$hojaActiva->setCellValue('M'.$filainicial2,'$'.$totalganancia);
+										$hojaActiva->setCellValue('I' . $filainicial2, $key3->numunidad);
+										$hojaActiva->setCellValue('J' . $filainicial2, $key3->placas);
+										//$hojaActiva->setCellValue('L' . $filainicial2, $key3->choferganancia);
+										//$hojaActiva->setCellValue('K'.$filainicial2,'$'.$totalgananciatte);
+										$hojaActiva->setCellValue('K' . $filainicial2, '$' . $key3->sumatotal);
+										$hojaActiva->setCellValue('L' . $filainicial2, $key3->cantidadTicket);
+										$hojaActiva->setCellValue('M' . $filainicial2, $key3->dias_con_ventas);
+
+									} else {
+										//$hojaActiva->setCellValue('M'.$filainicial2,'$'.$totalganancia);
+										$hojaActiva->setCellValue('I' . $filainicial2, $key3->numempleado);
+										$hojaActiva->setCellValue('J' . $filainicial2, $key3->placas);
+										//$hojaActiva->setCellValue('L' . $filainicial2, $key3->choferganancia);
+										//$hojaActiva->setCellValue('K'.$filainicial2,'$'.$totalgananciasaat);
+										$hojaActiva->setCellValue('K' . $filainicial2, '$' . $key3->sumatotal);
+										$hojaActiva->setCellValue('N' . $filainicial2, $key3->empresanom);
+
+									}
+									$filainicial2++;
+
+								}
+							}
+							$totalgananciatte = 0;
+							$totalgananciasaat = 0;
+							$totalgananciaEUAtte = 0;
+							$totalgananciaEUAsaat = 0;
+							$totalgananciaMXNtte = 0;
+							$totalgananciaMXNsaat = 0;
+
+
+						}
+
+
+
+
+					}
+					if ($empresa == 1) {
+						$hojaActiva->setCellValue('A6', 'T.T.');
+					}
+					if ($empresa == 2) {
+						$hojaActiva->setCellValue('A6', 'S.A.A.T.');
+					}
+
+
+					$w = new Xlsx($spreadsheet);
+					$w->save("R.Choferes.xlsx");
+					header("Content-disposition: attachment; filename=R.Choferes.xlsx;Content-type: MIME");
+					readfile("R.Choferes.xlsx");
+				}
 
 
 

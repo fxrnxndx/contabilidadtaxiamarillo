@@ -211,6 +211,20 @@ else
    return false;
  }
 }
+function BuscarEmpresaUnidad($idempresa)
+{
+  $sql = "SELECT * FROM tbl_unidad WHERE id_empresa_fk='{$idempresa}'";
+  $query= $this->db->query($sql);
+  
+   if($query->getresultArray())
+ {
+   return $query;
+ }
+else
+ {
+   return false;
+ }
+}
 
 //inicia  bloque unidad
 function TodasUnidades(){
@@ -561,9 +575,10 @@ else
    return false;
  }
 }
-function ActualizarVendedor($nombre,$apellidos,$ganancia,$id_empresa_fk,$estatus,$idvendedor){
+function ActualizarVendedor($nombre,$apellidos,$ganancia,$id_empresa_fk,$estatus,$idvendedor,$telefono){
   $sql = "UPDATE tbl_vendedor SET nombre='{$nombre}',
   apellidos='{$apellidos}',
+  telefono='{$telefono}',
   porcentaje_ganancia='{$ganancia}',
   id_empresa_fk='{$id_empresa_fk}',
   estatus='{$estatus}' 
@@ -1111,6 +1126,68 @@ else
    return false;
  }
 }
+function ReporteVentaUnidades($empresa,$fechainicio,$fechafinal){
+  $sql = "SELECT venta.id_chofer_fk as idchofer,
+  venta.* , 
+  empresa.nombre as empresachofernom,
+  chofer.nombre as chofernom, 
+  unidad.NumUnidad as NumUnidad, 
+  chofer.numero_empleado as numempleado,
+  vendedor.nombre as vendedornom,
+  (select cambio.valor from tbl_tipo_cambio as cambio) as cambio
+  FROM tbl_ventas as venta
+  INNER JOIN tbl_chofer as chofer ON venta.id_chofer_fk = chofer.numero_empleado  
+  INNER JOIN tbl_unidad as unidad ON venta.id_unidad_fk = unidad.NumUnidad  
+  INNER JOIN tbl_empresa as empresa ON venta.id_empresa_fk=empresa.id_empresa
+  INNER JOIN tbl_vendedor as vendedor ON venta.id_vendedor_fk=vendedor.id_vendedor
+  WHERE  chofer.id_empresa_fk={$empresa} and venta.estatus='VENDIDO' and venta.fecha_venta BETWEEN '{$fechainicio}' AND '{$fechafinal}' ORDER BY id_ventas ASC ";
+  $query= $this->db->query($sql);
+  
+   if($query->getresultArray())
+ {
+   return $query;
+ }
+else
+ {
+   return false;
+ }
+}
+function ReporteVentaUnidadesGanancia($empresa,$fechainicio,$fechafinal,$unidad){
+  $sql = "SELECT  
+  SUM(venta.totalMXN) as sumatotal,
+  SUM(venta.totalMXN)/100 *(chofer.porcentaje_ganancia) as totalganancia ,
+  empresa.nombre as empresanom, 
+  unidad.Placas as placas,
+  COUNT(venta.id_ventas) as cantidadTicket,
+  COUNT(DISTINCT DATE(venta.fecha_venta)) AS dias_con_ventas,
+  unidad.NumUnidad as numunidad,
+  chofer.porcentaje_ganancia as choferganancia,
+  (SELECT valor FROM tbl_tipo_cambio) as tipocambio,
+   (SELECT nombre  FROM tbl_empresa as empresainto WHERE empresainto.id_empresa=chofer.id_empresa_fk  ) as empresachofernom,vendedor.nombre as vendedornom
+  FROM tbl_ventas as venta
+  INNER JOIN tbl_chofer as chofer ON venta.id_chofer_fk = chofer.numero_empleado  
+  INNER JOIN tbl_unidad as unidad ON venta.id_unidad_fk = unidad.NumUnidad  
+  INNER JOIN tbl_empresa as empresa ON venta.id_empresa_fk=empresa.id_empresa
+  INNER JOIN tbl_vendedor as vendedor ON venta.id_vendedor_fk=vendedor.id_vendedor
+  WHERE  unidad.id_empresa_fk={$empresa} and venta.estatus='VENDIDO' and venta.id_unidad_fk={$unidad}   and  venta.fecha_venta BETWEEN '{$fechainicio}' AND '{$fechafinal}' GROUP BY venta.id_empresa_fk
+  ";
+  $query= $this->db->query($sql);
+  
+   if($query->getresultArray())
+ {
+   return $query;
+ }
+else
+ {
+   return false;
+ }
+}
+
+
+
+
+
+
 
 function ActualizarCambio($cantidad){
   $sql = "UPDATE tbl_tipo_cambio SET valor={$cantidad}

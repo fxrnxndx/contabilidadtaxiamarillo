@@ -41,6 +41,7 @@
               <option value="1">Empresa</option>
               <option value="2">Chofer</option>
               <option value="3">Vendedor</option>
+              <option value="4">Unidades</option>
              
               
             </select>

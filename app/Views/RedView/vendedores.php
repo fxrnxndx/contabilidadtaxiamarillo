@@ -412,7 +412,7 @@ function BuscarTexto(){
   document.getElementById('Nombre').value="";
   document.getElementById('Apellidos').value="";
   document.getElementById('Telefono').value="";
-  document.getElementById('Telefono').readOnly=false;
+  
   document.getElementById('Empresa').value="0";
   document.getElementById('Porcentaje').value="";
   document.getElementById('user-checkbox1').checked=true;
@@ -436,7 +436,7 @@ function editar(Nombre,Apellidos,Telefono,Empresa,Porcentaje,Estatus,idvendedor,
   document.getElementById('Nombre').value=Nombre;
   document.getElementById('Apellidos').value=Apellidos;
   document.getElementById('Telefono').value=Telefono;
-  document.getElementById('Telefono').readOnly=true;
+  
   document.getElementById('Empresa').value=Empresa;
   document.getElementById('Porcentaje').value=Porcentaje;
   document.getElementById('user-checkbox1').checked=Estatus;

@@ -45,7 +45,7 @@
   </style>
 </head>
 
-<body class="bg-theme bg-theme3">
+<body class="bg-theme bg-theme9">
 
   <!-- Start wrapper-->
   <div id="wrapper">
