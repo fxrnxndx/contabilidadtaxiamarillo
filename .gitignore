@@ -135,8 +135,13 @@ build/
 
 # Ignorar archivos de configuración y temporales
 .env
+.env.*
+
 *.log
 *.tmp
 
 # Ignorar archivos específicos
 config.json
+.env
+.env
+\.env

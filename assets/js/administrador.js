@@ -12,6 +12,7 @@ function editarCliente(id_cliente) {
             $("#correoEditar").val(json.correo);
             $("#telefonoEditar").val(json.telefono1);
             $("#telefono2Editar").val(json.telefono2);
+            $("#clienteFrecuenteEditar").val(json.cliente_frecuente).trigger('change');
             $("#modalEditar").modal('show');
         }
     });

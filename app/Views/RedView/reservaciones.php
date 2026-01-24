@@ -33,7 +33,6 @@
                                 <option value="PENDIENTE">Pendiente</option>
                                 <option value="CONFIRMADO">Confirmado</option>
                                 <option value="CANCELADO">Cancelado</option>
-                                <option value="VIAJE REALIZADO">Viaje Realizado</option>
                                 <option value="TODOS">Todos</option>
                             </select>
                         </div>

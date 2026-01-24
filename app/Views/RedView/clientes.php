@@ -31,13 +31,12 @@
                             <table class="table table-striped table-bordered" id="tableClientes">
                                 <thead>
                                     <tr>
-                                        <th>ID</th>
+                                        <th>Cliente Frecuente</th>
                                         <th>Nombre</th>
                                         <th>Apellidos</th>
                                         <th>Correo</th>
                                         <th>Telefono</th>
                                         <th>Telefono 2</th>
-                                        <th>Fecha Creacion</th>
                                         <th>Acciones</th>
                                     </tr>
                                 </thead>
@@ -45,13 +44,12 @@
                                     <?php if ($Clientes != false): ?>
                                         <?php foreach ($Clientes as $row): ?>
                                             <tr>
-                                                <td><?php echo $row['id_cliente']; ?></td>
+                                                <td><?php echo $row['cliente_frecuente'] ? "SI" : "NO"; ?></td>
                                                 <td><?php echo $row['nombre']; ?></td>
                                                 <td><?php echo $row['apellidos']; ?></td>
                                                 <td><?php echo $row['correo']; ?></td>
                                                 <td><?php echo $row['telefono1']; ?></td>
                                                 <td><?php echo $row['telefono2']; ?></td>
-                                                <td> <?php echo $row['fecha_creacion']; ?></td>
                                                 <td>
                                                     <a href="#" onclick="editarCliente('<?php echo $row['id_cliente']; ?>');"><i
                                                             class="zmdi zmdi-brush"></i> <span>Editar</span></a>
@@ -152,6 +150,14 @@
                         <input type="text" class="form-control modal-inputs" id="telefono2" name="telefono2"
                             placeholder="Telefono 2">
                     </div>
+                    <div class="form-group">
+                        <label for="clienteFrecuente" class="modal-text">Cliente Frecuente</label>
+                        <select class="form-control modal-inputs" id="clienteFrecuente" name="clienteFrecuente">
+                            <option value="0">No</option>
+                            <option value="1">Si</option>
+                        </select>
+                    </div>
+
                 </div>
 
                 <!-- Modal footer -->
@@ -204,6 +210,14 @@
                         <input type="text" class="form-control modal-inputs" id="telefono2Editar" name="telefono2Editar"
                             placeholder="Telefono 2">
                     </div>
+                    <div class="form-group">
+                        <label for="clienteFrecuenteEditar" class="modal-text">Cliente Frecuente</label>
+                        <select class="form-control modal-inputs" id="clienteFrecuenteEditar"
+                            name="clienteFrecuenteEditar">
+                            <option value="0">No</option>
+                            <option value="1">Si</option>
+                        </select>
+                    </div>
                 </div>
 
                 <!-- Modal footer -->
@@ -230,25 +244,25 @@
                 {
                     extend: 'copy',
                     exportOptions: {
-                        columns: [0, 1, 2, 3, 4, 5, 6]
+                        columns: [0, 1, 2, 3, 4, 5]
                     }
                 },
                 {
                     extend: 'csv',
                     exportOptions: {
-                        columns: [0, 1, 2, 3, 4, 5, 6]
+                        columns: [0, 1, 2, 3, 4, 5]
                     }
                 },
                 {
                     extend: 'excel',
                     exportOptions: {
-                        columns: [0, 1, 2, 3, 4, 5, 6]
+                        columns: [0, 1, 2, 3, 4, 5]
                     }
                 },
                 {
                     extend: 'pdf',
                     exportOptions: {
-                        columns: [0, 1, 2, 3, 4, 5, 6]
+                        columns: [0, 1, 2, 3, 4, 5]
                     },
                     header: true,
                     title: 'CLIENTES',
@@ -257,19 +271,19 @@
                     customize: function (doc) {
                         doc.defaultStyle.fontSize = 10;
                         doc.styles.tableHeader.fontSize = 12; //<-- set fontsize to 16 instead of 10 
-                        doc.content[1].table.widths = ['14.28%', '14.28%', '14.28%', '14.28%', '14.28%', '14.28%', '14.28%'];
+                        doc.content[1].table.widths = ['16.66%', '16.66%', '16.66%', '16.66%', '16.66%', '16.66%'];
                         doc.defaultStyle.alignment = 'center';
                     }
                 },
                 {
                     extend: 'print',
                     exportOptions: {
-                        columns: [0, 1, 2, 3, 4, 5, 6]
+                        columns: [0, 1, 2, 3, 4, 5]
                     }
                 }
             ],
             //ordenar
-            order: [[1, 'asc']],
+            order: [[0, 'desc']],
             //paginacion
             pageLength: 1000,
             //responsive

@@ -20,7 +20,7 @@
 
 <script src=<?php echo (base_url("assets/js/axios.min.js")); ?>></script>
 
-<script src=<?php echo (base_url("assets/js/administrador.js")); ?>></script>
+<script src=<?php echo (base_url("assets/js/administrador.js?v=2")); ?>></script>
 
 <script src=<?php echo (base_url("assets/js/datatables.js")); ?>></script>
 

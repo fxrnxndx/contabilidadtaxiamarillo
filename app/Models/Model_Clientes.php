@@ -8,7 +8,7 @@ class Model_Clientes extends Model
 {
     protected $table = 'tbl_clientes';
     protected $primaryKey = 'id_cliente';
-    protected $allowedFields = ['id_cliente', 'nombre', 'apellidos', 'correo', 'telefono1', 'telefono2', 'fecha_creacion'];
+    protected $allowedFields = ['id_cliente', 'nombre', 'apellidos', 'correo', 'telefono1', 'telefono2', 'fecha_creacion', 'cliente_frecuente'];
     protected $returnType = 'array';
 
     //traer todos los clientes
