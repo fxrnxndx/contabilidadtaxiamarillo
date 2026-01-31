@@ -1626,6 +1626,7 @@ class Home extends BaseController
 			'telefono2' => $this->request->getPost('telefono2'),
 			'cliente_frecuente' => $this->request->getPost('clienteFrecuente')
 		];
+		$data['cliente_frecuente'] = $data['cliente_frecuente'] == '1' ? 1 : 0;
 
 		if ($data['nombre'] == '' || $data['apellidos'] == '') {
 			$this->session->setFlashdata('alerta', 'Debe ingresar nombre y apellidos');
@@ -1669,7 +1670,7 @@ class Home extends BaseController
 			'telefono2' => $this->request->getPost('telefono2Editar'),
 			'cliente_frecuente' => $this->request->getPost('clienteFrecuenteEditar')
 		];
-		$data['cliente_frecuente'] = $data['cliente_frecuente'] == 'on' ? 1 : 0;
+		$data['cliente_frecuente'] = $data['cliente_frecuente'] == '1' ? 1 : 0;
 		$this->modelClientes->actualizarCliente($data);
 		$this->session->setFlashdata('alerta', 'Cliente editado correctamente');
 		return redirect()->to(base_url("Home/clientes"));
