@@ -201,7 +201,7 @@
                         <select class="form-control modal-inputs" id="status" name="status" required>
                             <option value="">Seleccione un Status</option>
                             <option value="PENDIENTE">Pendiente</option>
-                            <option value="CONFIRMADO">Confirmado</option>
+                            <option value="VIAJE REALIZADO">Viaje Realizado</option>
                         </select>
                     </div>
                 </div>
@@ -276,7 +276,7 @@
                         <select class="form-control modal-inputs" id="statusEditar" name="statusEditar">
                             <option value="">Seleccione un Status</option>
                             <option value="PENDIENTE">Pendiente</option>
-                            <option value="CONFIRMADO">Confirmado</option>
+                            <option value="VIAJE REALIZADO">Viaje Realizado</option>
                             <option value="CANCELADO">Cancelado</option>
                         </select>
                     </div>
