@@ -127,12 +127,14 @@ class Home extends BaseController
 		}
 
 	}
-	public function validaruser()
+	public function validaruser() 
 	{
-		if (isset($_SESSION['usuario'])) {
-
+		if (isset($_SESSION['usuario']) or isset($_SESSION['nombre'])) {
+           //echo ("INICIAR SESION DE NUEVO ");
 		} else {
-			return redirect()->to(base_url("Home/login"));
+
+   			return redirect()->to(base_url("Home/login"));
+			//echo ("INICIAR SESION DE NUEVO ");//return redirect()->to(base_url("Home/login"));
 		}
 
 	}
@@ -1595,7 +1597,15 @@ class Home extends BaseController
 	//Clientes
 	public function Clientes()
 	{
-		$this->validaruser();
+		//VALIDAR SESION
+		if (isset($_SESSION['usuario']) or isset($_SESSION['nombre'])) {
+     
+		} else {
+
+   			return redirect()->to(base_url("Home/login"));
+			
+		}
+		// FIN VALIDAR SESION
 		$Datos = array(
 			'Clientes' => $this->modelClientes->obtenerClientes(),
 		);
