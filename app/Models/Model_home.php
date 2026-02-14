@@ -670,11 +670,13 @@ function ReporteVentaEmpresa($empresa,$fechainicio,$fechafinal){
  empresa.nombre as empresanom, 
  punto.punto_venta as nompunto, 
  chofer.nombre as chofernom, 
- unidad.NumUnidad as NumUnidad, 
+ unidad.NumUnidad as NumUnidad,
+ pago.Pago as tipopago, 
  vendedor.nombre as vendedornom,
  (select cambio.valor from tbl_tipo_cambio as cambio) as cambio
   FROM tbl_ventas as venta
   INNER JOIN tbl_chofer as chofer ON venta.id_chofer_fk = chofer.numero_empleado 
+  INNER JOIN tbl_tipo_pago as pago ON venta.id_tipo_pago_fk=pago.id_tipo_pago
   INNER JOIN tbl_punto_venta as punto ON venta.punto_venta = punto.id_punto_venta 
    INNER JOIN tbl_unidad as unidad ON venta.id_unidad_fk = unidad.NumUnidad  
   INNER JOIN tbl_empresa as empresa ON venta.id_empresa_fk=empresa.id_empresa
@@ -696,12 +698,14 @@ function ReporteVentaChoferes($empresa,$fechainicio,$fechafinal){
   venta.* , 
   empresa.nombre as empresachofernom,
   chofer.nombre as chofernom, 
+  pago.Pago as tipopago,
   unidad.NumUnidad as NumUnidad, 
   chofer.numero_empleado as numempleado,
   vendedor.nombre as vendedornom,
   (select cambio.valor from tbl_tipo_cambio as cambio) as cambio
   FROM tbl_ventas as venta
   INNER JOIN tbl_chofer as chofer ON venta.id_chofer_fk = chofer.numero_empleado  
+  INNER JOIN tbl_tipo_pago as pago ON venta.id_tipo_pago_fk=pago.id_tipo_pago
   INNER JOIN tbl_unidad as unidad ON venta.id_unidad_fk = unidad.NumUnidad  
   INNER JOIN tbl_empresa as empresa ON venta.id_empresa_fk=empresa.id_empresa
   INNER JOIN tbl_vendedor as vendedor ON venta.id_vendedor_fk=vendedor.id_vendedor
@@ -1194,7 +1198,7 @@ function ActualizarCambio($cantidad){
   WHERE id_cambio=1";
   $query= $this->db->query($sql);
   
-   if($query->getresultArray())
+   if($query)
  {
    return $query;
  }

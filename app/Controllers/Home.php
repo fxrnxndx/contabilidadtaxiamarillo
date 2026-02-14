@@ -749,6 +749,7 @@ class Home extends BaseController
 						$hojaActiva->setCellValue('F' . $filainicial, $row->NumUnidad);
 						$hojaActiva->setCellValue('H' . $filainicial, $row->factura);
 						$hojaActiva->setCellValue('I' . $filainicial, $row->nompunto);
+						$hojaActiva->setCellValue('J' . $filainicial, $row->tipopago);
 						/*if($row->id_moneda_fk==2)
 						{
 							$hojaActiva->setCellValue('F'.$filainicial,'$'.$row->total*$row->cambio);
@@ -797,6 +798,7 @@ class Home extends BaseController
 				$spreadsheet = $reader->load("ReporteChoferes.xlsx");
 				$spreadsheet->setActiveSheetIndex(0);
 				$hojaActiva = $spreadsheet->getActiveSheet();
+				$hoja2 = $spreadsheet->setActiveSheetIndex(1);
 				//Descargar reporte por todos los choferes
 				if ($chofer == 0) {
 					$dataBusquedaChoferes = array(
@@ -826,6 +828,7 @@ class Home extends BaseController
 								$hojaActiva->setCellValue('G'.$filainicial,'$'.$row->total);
 							} */
 							$hojaActiva->setCellValue('G' . $filainicial, '$' . $row->totalMXN);
+							$hojaActiva->setCellValue('H' . $filainicial, $row->tipopago);
 							$filainicial++;
 
 
@@ -890,13 +893,13 @@ class Home extends BaseController
 
 									if ($key3->empresanom == "TT") {
 										//$hojaActiva->setCellValue('M'.$filainicial2,'$'.$totalganancia);
-										$hojaActiva->setCellValue('I' . $filainicial2, $key3->numempleado);
-										$hojaActiva->setCellValue('J' . $filainicial2, $key3->chofernom);
-										$hojaActiva->setCellValue('L' . $filainicial2, $key3->choferganancia);
+										$hoja2->setCellValue('A' . $filainicial2, $key3->numempleado);
+										$hoja2->setCellValue('B' . $filainicial2, $key3->chofernom);
+										$hoja2->setCellValue('D' . $filainicial2, $key3->choferganancia);
 										//$hojaActiva->setCellValue('K'.$filainicial2,'$'.$totalgananciatte);
-										$hojaActiva->setCellValue('K' . $filainicial2, '$' . $key3->sumatotal);
-										$hojaActiva->setCellValue('N' . $filainicial2, $key3->cantidadTicket);
-										$hojaActiva->setCellValue('O' . $filainicial2, $key3->dias_con_ventas);
+										$hoja2->setCellValue('C' . $filainicial2, '$' . $key3->sumatotal);
+										$hoja2->setCellValue('F' . $filainicial2, $key3->cantidadTicket);
+										$hoja2->setCellValue('G' . $filainicial2, $key3->dias_con_ventas);
 
 									} else {
 										//$hojaActiva->setCellValue('M'.$filainicial2,'$'.$totalganancia);
@@ -1127,9 +1130,11 @@ class Home extends BaseController
 						$hojaActiva->setCellValue('D' . $filainicial, $row->vendedornom);
 						//$hojaActiva->setCellValue('E'.$filainicial,'$'.$row->total);
 						if ($row->id_moneda_fk == 2) {
-							$hojaActiva->setCellValue('E' . $filainicial, '$' . $row->totalMXN . "-" . $row->tipopago);
+							$hojaActiva->setCellValue('E' . $filainicial, '$' . $row->totalMXN );
+							$hojaActiva->setCellValue('F' . $filainicial, $row->tipopago);
 						} else {
-							$hojaActiva->setCellValue('E' . $filainicial, '$' . $row->totalMXN . "-" . $row->tipopago);
+							$hojaActiva->setCellValue('E' . $filainicial, '$' . $row->totalMXN );
+							$hojaActiva->setCellValue('F' . $filainicial, $row->tipopago);
 						}
 
 						$filainicial++;

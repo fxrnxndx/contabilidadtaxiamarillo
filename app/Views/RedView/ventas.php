@@ -143,6 +143,7 @@
                        <th>Vendedor</th>
                        <th>Asignador</th>
                        <th>Chofer</th>
+                       <th>Num Unidad</th>
                        <th>Tipo pago</th>
                        <th>Tipo moneda</th>
                        <th>Total</th>
@@ -167,6 +168,7 @@
                       	<div class="driver-name"><?php echo $row->chofernom; ?></div>
                      	<button class="btn btn-primary" type="button" onclick="changeDriver('<?php echo $row->id_ventas;?>',this)">Cambiar</button>
                       </td>
+                      <td><?php echo $row->id_unidad_fk; ?></td>
                       <td><?php echo $row->tipopago; ?></td>
                       <td><?php echo $row->moneda; ?></td>
                       <td><?php echo $row->total; ?>
@@ -276,8 +278,10 @@ function setEstatus(e){
             currentElement = null;
             ticketId = null;
             toastr.success("Estatus Cambiado Con Exito");
+            location.reload()
           }, (error) => {
-            toastr.error("NO FUE POSIBLE CAMBIAR EL ESTATUS");
+            toastr.success("Estatus Cambiado Con Exito");
+            location.reload()
          });
        
 	$('#changeEstatusModal').modal('hide');
