@@ -1,0 +1,317 @@
+<?php
+error_reporting(0);
+header('Content-Type: application/json');
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $nombre = $_POST['nombreReservacion'] ?? '';
+    $apellidos = $_POST['apellidosReservacion'] ?? '';
+    $correo = $_POST['correoReservacion'] ?? '';
+    $telefono = $_POST['telefonoReservacion'] ?? '';
+    $fecha = $_POST['fechaReservacion'] ?? '';
+    $hora = $_POST['horaReservacion'] ?? '';
+    $numeroPersonas = $_POST['numeroPersonasReservacion'] ?? '';
+    $domicilioOrigen = $_POST['domicilioOrigenReservacion'] ?? '';
+    $domicilioDestino = $_POST['domicilioDestinoReservacion'] ?? '';
+    $notas = $_POST['notasReservacion'] ?? '';
+
+
+    //$destinatario = "contacto@taxisaiport.com";
+    $destinatario = "reservaciones@taxisairport.com";
+    $titulo = "Nueva reservacion desde la landing page";
+    // Cuerpo del correo
+    $cuerpo = '
+        <html>
+                <head>
+                    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+                    <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0;" />
+                    <!--[if !mso]--><!-- -->
+                    <link href="https://fonts.googleapis.com/css?family=Work+Sans:300,400,500,600,700" rel="stylesheet">
+                    <link href="https://fonts.googleapis.com/css?family=Quicksand:300,400,700" rel="stylesheet">
+                    <!-- <![endif]-->
+
+                    <title>SIR B.C.</title>
+
+                    <style type="text/css">
+                        body {
+                            width: 100%;
+                            background-color: #ffffff;
+                            margin: 0;
+                            padding: 0;
+                            -webkit-font-smoothing: antialiased;
+                            mso-margin-top-alt: 0px;
+                            mso-margin-bottom-alt: 0px;
+                            mso-padding-alt: 0px 0px 0px 0px;
+                        }
+                
+                        p,
+                        h1,
+                        h2,
+                        h3,
+                        h4 {
+                            margin-top: 0;
+                            margin-bottom: 0;
+                            padding-top: 0;
+                            padding-bottom: 0;
+                        }
+                
+                        span.preheader {
+                            display: none;
+                            font-size: 1px;
+                        }
+                
+                        html {
+                            width: 100%;
+                        }
+                
+                        table {
+                            font-size: 14px;
+                            border: 0;
+                        }
+                        /* ----------- responsivity ----------- */
+                
+                        @media only screen and (max-width: 640px) {
+                            /*------ top header ------ */
+                            .main-header {
+                                font-size: 20px !important;
+                            }
+                            .main-section-header {
+                                font-size: 28px !important;
+                            }
+                            .show {
+                                display: block !important;
+                            }
+                            .hide {
+                                display: none !important;
+                            }
+                            .align-center {
+                                text-align: center !important;
+                            }
+                            .no-bg {
+                                background: none !important;
+                            }
+                            /*----- main image -------*/
+                            .main-image img {
+                                width: 440px !important;
+                                height: auto !important;
+                            }
+                            /* ====== divider ====== */
+                            .divider img {
+                                width: 440px !important;
+                            }
+                            /*-------- container --------*/
+                            .container590 {
+                                width: 440px !important;
+                            }
+                            .container580 {
+                                width: 400px !important;
+                            }
+                            .main-button {
+                                width: 220px !important;
+                            }
+                            /*-------- secions ----------*/
+                            .section-img img {
+                                width: 320px !important;
+                                height: auto !important;
+                            }
+                            .team-img img {
+                                width: 100% !important;
+                                height: auto !important;
+                            }
+                        }
+                
+                        @media only screen and (max-width: 479px) {
+                            /*------ top header ------ */
+                            .main-header {
+                                font-size: 18px !important;
+                            }
+                            .main-section-header {
+                                font-size: 26px !important;
+                            }
+                            /* ====== divider ====== */
+                            .divider img {
+                                width: 280px !important;
+                            }
+                            /*-------- container --------*/
+                            .container590 {
+                                width: 280px !important;
+                            }
+                            .container590 {
+                                width: 280px !important;
+                            }
+                            .container580 {
+                                width: 260px !important;
+                            }
+                            /*-------- secions ----------*/
+                            .section-img img {
+                                width: 280px !important;
+                                height: auto !important;
+                            }
+                        }
+                    </style>
+                    <!-- [if gte mso 9]><style type=”text/css”>
+                        body {
+                        font-family: arial, sans-serif!important;
+                        }
+                        </style>
+                    <![endif]-->
+                </head>
+
+
+                <body class="respond" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0">
+                    <!-- pre-header -->
+                    <table style="display:none!important;">
+                        <tr>
+                            <td>
+                                <div style="overflow:hidden;display:none;font-size:1px;color:#ffffff;line-height:1px;font-family:Arial;maxheight:0px;max-width:0px;opacity:0;">
+                                    Nuevo mensaje
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                    <!-- pre-header end -->
+
+                    <!-- big image section -->
+                    <table border="0" width="100%" cellpadding="0" cellspacing="0" bgcolor="ffffff" class="bg_color">
+
+                        <tr>
+                            <td align="center">
+                                <table border="0" align="center" width="590" cellpadding="0" cellspacing="0" class="container590">
+                                    <tr>
+
+                                        <td align="center" class="section-img">
+                                            <a href="" style=" border-style: none !important; display: block; border: 0 !important;"><img src="https://taxisairport.com/assets/img/tt1_transparent.png" style="display: block; width: 590px;" width="400" border="0" alt="" /></a>
+
+
+
+
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td height="20" style="font-size: 20px; line-height: 20px;">&nbsp;</td>
+                                    </tr>
+                                    <tr>
+                                        <td align="center" style="color: #343434; font-size: 24px; font-family: Quicksand, Calibri, sans-serif; font-weight:700;letter-spacing: 3px; line-height: 35px;" class="main-header">
+
+
+                                            <div style="line-height: 35px">
+
+                                                Nuevo <span style="color: #003865;">Mensaje de Contacto</span>
+
+                                            </div>
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td height="10" style="font-size: 10px; line-height: 10px;">&nbsp;</td>
+                                    </tr>
+
+                                    <tr>
+                                        <td align="center">
+                                            <table border="0" width="40" align="center" cellpadding="0" cellspacing="0" bgcolor="eeeeee">
+                                                <tr>
+                                                    <td height="2" style="font-size: 2px; line-height: 2px;">&nbsp;</td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td height="20" style="font-size: 20px; line-height: 20px;">&nbsp;</td>
+                                    </tr>
+
+                                    <tr>
+                                        <td align="center">
+                                            <table border="0" width="400" align="center" cellpadding="0" cellspacing="0" class="container590">
+                                                <tr>
+                                                    <td align="left" style="color: #888888; font-size: 16px; font-family: "Work Sans", Calibri, sans-serif; line-height: 24px;">
+
+
+                                                        <div style="line-height: 24px">
+                                                            <h4>Nombre:</h4> <p>' . $nombre . '</p><br>
+                                                            <h4>Apellidos:</h4> <p>' . $apellidos . '</p><br>
+                                                            <h4>Correo:</h4> <p>' . $correo . '</p><br>
+                                                            <h4>Telefono:</h4> <p>' . $telefono . '</p><br>
+                                                            <h4>Fecha de la reservacion:</h4> <p>' . $fecha . '</p><br>
+                                                            <h4>Hora de la reservacion:</h4> <p>' . $hora . '</p><br>
+                                                            <h4>Numero de personas:</h4> <p>' . $numeroPersonas . '</p><br>
+                                                            <h4>Domicilio de origen:</h4> <p>' . $domicilioOrigen . '</p><br>
+                                                            <h4>Domicilio de destino:</h4> <p>' . $domicilioDestino . '</p><br>
+                                                            <h4>Notas:</h4> <p>' . $notas . '</p><br>
+                                                
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td height="25" style="font-size: 25px; line-height: 25px;">&nbsp;</td>
+                                    </tr>
+
+
+                                </table>
+
+                            </td>
+                        </tr>
+
+                    </table>
+                    <!-- end section -->
+
+
+                    <!-- footer ====== -->
+                    <table border="0" width="100%" cellpadding="0" cellspacing="0" bgcolor="#d68501">
+
+                        <tr>
+                            <td height="25" style="font-size: 25px; line-height: 25px;">&nbsp;</td>
+                        </tr>
+
+                        <tr>
+                            <td align="center">
+
+                                <table border="0" align="center" width="590" cellpadding="0" cellspacing="0" class="container590">
+
+                                    <tr>
+                                        <td>
+                                            <table border="0" align="left" cellpadding="0" cellspacing="0" style="border-collapse:collapse; mso-table-lspace:0pt; mso-table-rspace:0pt;" class="container590">
+                                                <tr>
+                                                    <td align="left" style="color: #aaaaaa; font-size: 14px; font-family: "Work Sans", Calibri, sans-serif; line-height: 24px;">
+                                                        <div style="line-height: 24px;">
+
+                                                            <span style="color: white;">Diseñado por Tech Hub</span>
+
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                    </tr>
+
+                                </table>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td height="25" style="font-size: 25px; line-height: 25px;">&nbsp;</td>
+                        </tr>
+
+                    </table>
+                    <!-- end footer ====== -->
+                </body>
+        </html>';
+
+    // Cabeceras
+    $headers = "MIME-Version: 1.0\r\n";
+    $headers .= "Content-type: text/html; charset=utf-8\r\n";
+    $headers .= "From: $nombre <$correo>\r\n";
+
+    // Enviar correo
+    if (mail($destinatario, $titulo, $cuerpo, $headers)) {
+        echo json_encode(['success' => true, 'message' => 'Correo enviado exitosamente.']);
+    } else {
+        echo json_encode(['success' => false, 'message' => 'No se pudo enviar el correo.']);
+    }
+    exit;
+}
+echo json_encode(['success' => false, 'message' => 'Método no permitido']);
+?>
