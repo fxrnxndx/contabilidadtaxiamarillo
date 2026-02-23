@@ -46,7 +46,6 @@
                 <input class="input" type="date" step="0.01" name="fechaticket" id="fechaticket" required>
                 <span>Fecha de Ticket</span>
             </label>
-
             <a class="btn bnt-lg btn-primary" onclick="paso2();">Siguiente paso</a>
         </form>
 
@@ -133,9 +132,11 @@
                 </select>
                 <span>Uso de CFDI</span>
             </label>
-
-            <a class="btn bnt-lg btn-primary" id="generarSolicitud" onclick="generarSolicitud()">Generar
-                Solicitud</a>
+            <div class="d-flex justify-content-between">
+                <a class="btn bnt-lg btn-secondary" onclick="paso1()">Regresar</a>
+                <a class="btn bnt-lg btn-primary" id="generarSolicitud" onclick="generarSolicitud()">Generar
+                    Solicitud</a>
+            </div>
             <input type="hidden" name="tipoFormulario" id="tipoFormulario" value="externo">
         </form>
     </div>
@@ -157,7 +158,6 @@
 
                 <!-- Modal footer -->
                 <div class="modal-footer">
-
                     <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
                 </div>
 

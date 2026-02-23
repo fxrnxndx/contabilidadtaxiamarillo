@@ -35,6 +35,8 @@ function generarSolicitud() {
     if ($('#rfcreceptor').val() == "" || $('#razonsocial').val() == "" || $('#email').val() == "" || $('#cp').val() == "" || $('#Regimen').val() == "" || $('#cfdi').val() == "" || $('#tipoFormulario').val() == "") {
         $('#mensaje').text("Faltan campos por llenar");
         $('#modalMensajes').modal('show');
+        buttonSend.removeClass('Bloqueo');
+        buttonSend.html('Generar Solicitud');
         return;
     }
     const form = document.getElementById('paso2');
@@ -80,13 +82,27 @@ function generarSolicitud() {
             $('#modalMensajes').modal('show');
             buttonSend.removeClass('Bloqueo');
             buttonSend.html('Generar Solicitud');
+            //agregamos la funcion recargar al boton modalMensajes
+            $('#modalMensajes').on('hidden.bs.modal', function () {
+                recargar();
+            });
         },
         error: function (xhr, status, error) {
-            console.log(xhr.responseText); // 👈 útil para ver el error en consola
+            console.log(xhr.responseText);
             $('#mensaje').text('Ocurrió un error');
             $('#modalMensajes').modal('show');
             buttonSend.removeClass('Bloqueo');
             buttonSend.html('Generar Solicitud');
         }
     });
+}
+
+function paso1() {
+    $('#paso2').addClass('d-none');
+    $('#paso1').removeClass('d-none');
+}
+
+//funcion para recargar la pagina
+function recargar() {
+    location.reload();
 }

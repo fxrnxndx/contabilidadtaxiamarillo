@@ -593,7 +593,7 @@
                   <ul>
                     <li><a href="#contacto" data-toggle="tab">Contacto</a></li>
                     <li><a href="#reservacion" data-toggle="tab" onclick="quitar(this)">Reservación</a></li>
-                    <li><a href="facturacion/Facturar.html" target="_blank">Facturación</a>
+                    <li><a href="#facturacion" data-toggle="tab" onclick="quitar(this)">Facturación</a>
                     </li>
                   </ul>
                 </div>
@@ -797,6 +797,27 @@
                         <div class="col-md-12 text-center">
                           <button type="submit" class="buttonSend" id="botonReservar"
                             onclick="reservacion()">Reservar</button>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                  <div class="tab-pane" id="facturacion">
+                    <div class="row">
+                      <form id="formFacturacion" method="post">
+                        <div class="col-sm-12">
+                          <h4 class="info-text"> Solicitud de facturación</h4>
+                          <p>Para facturar su servicio, por favor haga clic en el botón de abajo.</p>
+                          <p>Se le redirigirá a nuestro portal de facturación donde podrá ingresar los datos
+                            necesarios para solicitar su factura.</p>
+                          <p>La solicitud de factura solo se podrá realizar dentro de la 1 hora posterior al
+                            servicio.</p>
+                          <p>Nota: La factura se enviará al correo electrónico proporcionado en el formulario de
+                            facturación en un lapso de 24 a 48 horas hábiles.</p>
+                        </div>
+                        <div class="col-md-12 text-center">
+                          <a class="buttonSend" id="botonFacturacion"
+                            href="https://taxisairport.com/facturacion/Facturar.html" target="_blank">Solicitar
+                            Factura</a>
                         </div>
                       </form>
                     </div>
