@@ -17,7 +17,7 @@ class Model_Facturel extends Model
 
 function BuscarTicket($ticket,$fecha,$monto)
 {
-  $sql = "SELECT * FROM tbl_ventas WHERE numero_ticket='{$ticket}' AND fecha_venta='{$fecha}' AND totalMXN='{$monto} 'AND estatus='VENDIDO' AND factura='NO'";
+  $sql = "SELECT * FROM tbl_ventas WHERE numero_ticket='{$ticket}' AND fecha_venta LIKE'%{$fecha}%' AND totalMXN='{$monto} 'AND estatus='VENDIDO' AND factura='NO'";
   $query= $this->db->query($sql);
   
    if($query->getresultArray())
@@ -62,7 +62,7 @@ function ActualizarTicketFactura($ticket)
   $sql = "UPDATE tbl_ventas SET factura='SI' WHERE numero_ticket='{$ticket}'";
   $query= $this->db->query($sql);
   
-  if($query->getresultArray()) 
+  if($query) 
   {
     return $query;
   }

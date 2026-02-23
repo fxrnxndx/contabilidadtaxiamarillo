@@ -68,7 +68,7 @@ class FacturelControll extends BaseController
 	{
 	
 		$ticket=$_GET['ticket'];
-		$fecha=$_GET['fecha'].' '.$_GET['hora'];
+		$fecha=$_GET['fecha'];
 		$monto=$_GET['monto'];
 		$TicketFacturado = array(
 			'TicketFacturado' => $this-> model-> TicketFacturado($ticket,$fecha,$monto)
@@ -91,14 +91,14 @@ class FacturelControll extends BaseController
 		$ActualizarTicketFactura = array(
 			'ActualizarTicketFactura' => $this-> model-> ActualizarTicketFactura($ticket)
 			);
-		
-		if ($ActualizarTicketFactura['ActualizarTicketFactura']!=false) {
+		return "SI";
+		/*if ($ActualizarTicketFactura['ActualizarTicketFactura']!=false) {
 			return "SI";
 		}
 		else
 		{
 			return "NO";
-		}
+		}*/
 
 	}
 
