@@ -32,7 +32,15 @@ class Home extends BaseController
 		$id_driver = $_POST['id_driver'];
 		$this->model->setDriverToSale($id_sale, $id_driver);
 		$driver = $this->model->getDriver($id_driver)[0];
-		echo '{"name":"' . $driver["numero_empleado"] . '|' . $driver["nombre"] . ' ' . $driver["apellidos"] . '"}';
+		//echo '{"name":"' . $driver["numero_empleado"] . '|' . $driver["nombre"] . ' ' . $driver["apellidos"] . '"}';
+	}
+	public function changeUnidad()
+	{
+		$id_sale = $_POST['id_sale'];
+		$id_unidad = $_POST['NumUnidad'];
+		$this->model->setUnidadToSale($id_sale, $id_unidad);
+		$unidad = $this->model->getUnidad($id_unidad)[0];
+		//echo '{"name":"' . $unidad["NumUnidad"] . '|' . $unidad["Placas"] . ' ' . $unidad["Marca"] . '"}';
 	}
 
 	public function changeStatus()
@@ -43,6 +51,14 @@ class Home extends BaseController
 		$this->model->setStatusToSale($id_sale, $status, $motive);
 		echo '{"msg":"ok"}';
 		//return redirect()->to(base_url("Home/venta")); 
+	}
+
+	public function changeTotal()
+	{
+		$id_sale = $_POST['id_sale'];
+		$total = $_POST['total'];
+		$this->model->setTotalToSale($id_sale, $total);
+		echo '{"name":"' . $total . '"}';
 	}
 
 	function __construct()
@@ -433,7 +449,7 @@ class Home extends BaseController
 
 		if ($idchofer == "0") {  //revisar que el chofer no exista
 			$dataExistencia = array(
-				'existencia' => $this->model->ExistenciaChofer($noempleado),
+				//'existencia' => $this->model->ExistenciaChofer($noempleado),
 				'existenciausuario' => $this->model->ExistenciaUsuarioChofer($usuario),
 			);
 			if ($dataExistencia['existencia'] == false && $dataExistencia['existenciausuario'] == false) {
@@ -465,7 +481,7 @@ class Home extends BaseController
 		} else {//Actualizar datos del chofer
 
 			if ($contra == $contra2) {
-				$this->model->ActualizarChofer($nombre, $apellidos, $telefono, $ganancia, $empresa, $estatus, $noempleado, $unidad, $socio);
+				$this->model->ActualizarChofer($nombre, $apellidos, $telefono, $ganancia, $empresa, $estatus, $idchofer, $unidad, $socio);
 				$this->model->ActualizarUsuarioChofer($usuario, $contra, $estatus, $noempleado);
 				$this->session->set('NOTIFICACION', '4');
 				return redirect()->to(base_url("Home/chofer"));
@@ -621,12 +637,31 @@ class Home extends BaseController
 
 	public function BuscarVentaEmpresa()
 	{
-		$empresa = $_POST['empresa'];
+		$empresa = "1";
 		$fecha = $_POST['fecha'];
-		$dataVentaEmpresa = array(
-			'dataVentaEmpresa' => $this->model->BuscarVenta($empresa, $fecha),
-			'drivers' => $this->model->TodosChofer()
-		);
+		$ticket = $_POST['ticket'];
+		if($ticket>0 and $fecha=="" ){
+			$dataVentaEmpresa = array(
+				'dataVentaEmpresa' => $this->model->BuscarVentaTicket($ticket),
+				'drivers' => $this->model->TodosChofer(),
+				'unidades' => $this->model->TodasUnidades(),
+				'tipopago' => $this->model->TodosTipoPago()
+			);
+		}else if($ticket==0 and $fecha!=""){
+			$dataVentaEmpresa = array(
+				'dataVentaEmpresa' => $this->model->BuscarVenta($empresa, $fecha),
+				'drivers' => $this->model->TodosChofer(),
+				'unidades' => $this->model->TodasUnidades(),
+				'tipopago' => $this->model->TodosTipoPago()
+			);
+		}else if($ticket>0 and $fecha!=""){
+			$dataVentaEmpresa = array(
+				'dataVentaEmpresa' => $this->model->BuscarVentaTicketFecha($ticket,$fecha),
+				'drivers' => $this->model->TodosChofer(),
+				'unidades' => $this->model->TodasUnidades(),
+				'tipopago' => $this->model->TodosTipoPago()
+			);
+		}
 		if ($empresa > 0) {
 			if ($dataVentaEmpresa['dataVentaEmpresa'] == false) {
 
