@@ -65,29 +65,7 @@
             <i class="zmdi zmdi-view-dashboard"></i> <span>Inicio</span>
           </a>
         </li>
-        <li>
-          <a href=<?php echo (base_url("Home/unidad")); ?>>
-            <i class="zmdi zmdi-format-list-bulleted"></i> <span>Unidades</span>
-          </a>
-        </li>
-
-        <li>
-          <a href=<?php echo (base_url("Home/chofer")); ?>>
-            <i class="zmdi zmdi-format-list-bulleted"></i> <span>Choferes</span>
-          </a>
-        </li>
-
-        <li>
-          <a href=<?php echo (base_url("Home/vendedores")); ?>>
-            <i class="zmdi zmdi-format-list-bulleted"></i> <span>Vendedores</span>
-          </a>
-        </li>
-
-        <li>
-          <a href=<?php echo (base_url("Home/supervisores")); ?>>
-            <i class="zmdi zmdi-format-list-bulleted"></i> <span>Supervisores</span>
-          </a>
-        </li>
+        
 
         <li>
           <a href=<?php echo (base_url("Home/venta")); ?>>
@@ -96,30 +74,7 @@
             </span>
           </a>
         </li>
-        <li>
-          <a href=<?php echo (base_url("Home/Clientes")); ?>>
-            <i class="zmdi zmdi-format-list-bulleted"></i> <span>Clientes</span>
-          </a>
-        </li>
-        <li>
-          <a href=<?php echo (base_url("Home/Reservaciones")); ?>>
-            <i class="zmdi zmdi-format-list-bulleted"></i> <span>Reservaciones</span>
-          </a>
-        </li>
-        <li>
-          <a href=<?php echo (base_url("Home/reporte")); ?>>
-            <i class="zmdi zmdi-grid"></i> <span>Reportes
-
-            </span>
-          </a>
-        </li>
-         <li>
-          <a href=<?php echo (base_url("Home/CatalogoConceptos")); ?>>
-            <i class="zmdi zmdi-format-list-bulleted"></i> <span>Catálogo de conceptos
-
-            </span>
-          </a>
-        </li>
+     
 
 
       </ul>

@@ -266,14 +266,11 @@ endif ?>
 
 
     <!--INICIO AGREGAR -->
-    <form action="<?php echo (base_url(" Home/BuscarVentaEmpresa")); ?>" method="post" accept-charset="utf-8">
+    <form action="<?php echo (base_url(" Home/BuscarVentaSocios")); ?>" method="post" accept-charset="utf-8">
       <div class="card col-4">
         <div class="card-content">
           <div class="row row-group m-0">
-            <div class="form-group ">
-              <label for="input-1"># Ticket</label>
-             <input type="number" class="form-control" id="ticket" placeholder="Ingresar el numero de ticket" name="ticket" value="0" >
-            </div>
+          
 
           </div>
           <div class="form-group">
@@ -289,6 +286,24 @@ endif ?>
       </div>
     </form>
 
+
+    <div class="card col-4">
+        <div class="card-content">
+          <div class="row row-group m-0">
+          
+
+          </div>
+          <div class="form-group">
+            <label for="input-1">Fecha</label>
+            <input type="date" class="form-control" id="Fecha" placeholder="Ingresar nombre" name="fecha" value="" >
+          </div>
+          <div class="form-group">
+            <label for="input-1">Buscar venta</label>
+            <button type="submit" class="btn btn-light px-10 form-control"><i class="zmdi zmdi-flickr"></i>
+              Buscar</button>
+          </div>
+        </div>
+      </div>
 
 
 
@@ -361,22 +376,19 @@ endif ?>
                       <div class="driver-name">
                         <?php echo $row->chofernom; ?>
                       </div>
-                      <button class="btn btn-primary" type="button"
-                        onclick="changeDriver('<?php echo $row->id_ventas; ?>',this)">Cambiar</button>
+                    
                     </td>
                     <td>
                       <div class="unidad-name">
                         <?php echo $row->id_unidad_fk; ?>
                       </div>
-                      <button class="btn btn-primary" type="button"
-                        onclick="changeUnidad('<?php echo $row->id_ventas; ?>',this)">Cambiar</button>
+                     
                     </td>
                     <td>
                       <div class="tipo-pago-name">
                       <?php echo $row->tipopago; ?>
                       </div>
-                      <button class="btn btn-primary" type="button"
-                        onclick="ChangeTipoPago('<?php echo $row->id_ventas; ?>',this)">Cambiar</button>
+                    
                     </td>
                     <td>
                       
@@ -388,15 +400,13 @@ endif ?>
                       <div class="total-name">
                         <?php echo $row->total; ?>
                       </div>
-                      <button class="btn btn-primary" type="button"
-                        onclick="ChangeTotal('<?php echo $row->id_ventas; ?>',<?php echo $row->total; ?>,this)">Cambiar</button>
+                     
                     </td>
                     <td>
                       <div class="estatus-name">
                         <?php echo $row->estatus; ?>
                       </div>
-                      <button class="btn btn-primary" type="button"
-                        onclick="changeEstatus('<?php echo $row->id_ventas; ?>',this)">Cambiar</button>
+                     
                     </td>
                     <td>
                       <?php echo $row->motivo_cancelado; ?>

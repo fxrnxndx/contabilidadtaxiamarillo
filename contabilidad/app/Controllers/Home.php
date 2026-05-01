@@ -40,6 +40,7 @@ class Home extends BaseController
 		$id_unidad = $_POST['NumUnidad'];
 		$this->model->setUnidadToSale($id_sale, $id_unidad);
 		$unidad = $this->model->getUnidad($id_unidad)[0];
+			echo '{"name":"'.$id_unidad.'"}';
 		//echo '{"name":"' . $unidad["NumUnidad"] . '|' . $unidad["Placas"] . ' ' . $unidad["Marca"] . '"}';
 	}
 
@@ -49,15 +50,43 @@ class Home extends BaseController
 		$status = $_POST['ticket_status'];
 		$motive = $_POST['motive'];
 		$this->model->setStatusToSale($id_sale, $status, $motive);
-		echo '{"msg":"ok"}';
+		echo '{"name":"'.$status.'"}';
 		//return redirect()->to(base_url("Home/venta")); 
+	}
+		public function changeTipoPago()
+	{
+		$id_sale = $_POST['id_sale'];
+		$tipo_pago = $_POST['tipopago'];
+		$tipo_tarjeta = $_POST['tipo_tarjeta'];
+         $this->model->setTipoPago($id_sale, $tipo_pago,$tipo_tarjeta);
+         if($tipo_pago==1)
+         {
+             echo '{"name":"Efectivo"}';
+         }
+         if($tipo_pago==2)
+         {
+              echo '{"name":"Voucher"}';
+         }
+         
+	    //return redirect()->to(base_url("Home/venta")); 
 	}
 
 	public function changeTotal()
 	{
 		$id_sale = $_POST['id_sale'];
 		$total = $_POST['total'];
-		$this->model->setTotalToSale($id_sale, $total);
+		$moneda = $_POST['moneda'];
+		$totalMXN=0;
+		$tipo_cambio = $this->model->TipoCambio();
+		foreach ($tipo_cambio->getResult() as $row) {
+			$tipo_cambio = $row->valor;
+		}
+		if($moneda==1){
+			$totalMXN = $total;
+		}else{
+			$totalMXN = $total * $tipo_cambio;
+		}
+		$this->model->setTotalToSale($id_sale, $total,$totalMXN,$moneda);
 		echo '{"name":"' . $total . '"}';
 	}
 
@@ -137,6 +166,25 @@ class Home extends BaseController
 				. view('RedView/index',$data)
 				. view('RedView/footer');*/
 				return redirect()->to(base_url("Home/index"));
+			}
+			if ($tipoperfil == "5") {
+				/*$data1 = array(
+					'DatosPerfil' => $this->model->DatosSocios($idperfil)
+				);*/
+
+				$this->session->set('id_socio', $idperfil);
+
+					$this->session->set('NOTIFICACION', 'true');
+					$this->session->set('nombre', $_SESSION['usuario']);
+					$this->session->set('correo', $_SESSION['usuario']);
+
+				
+
+				/*return view('RedView/header')
+				. view('RedView/index',$data)
+				. view('RedView/footer');*/
+			   return redirect()->to(base_url("Home/ventaSocios"));
+
 			}
 
 
@@ -450,15 +498,21 @@ class Home extends BaseController
 		if ($idchofer == "0") {  //revisar que el chofer no exista
 			$dataExistencia = array(
 				//'existencia' => $this->model->ExistenciaChofer($noempleado),
-				'existenciausuario' => $this->model->ExistenciaUsuarioChofer($usuario),
+				'existenciausuario' => $this->model->ExistenciaUsuarioChofer($usuario)
+				
 			);
-			if ($dataExistencia['existencia'] == false && $dataExistencia['existenciausuario'] == false) {
+			if ($dataExistencia['existenciausuario'] == false) {
 				if ($empresa > 0 && $socio > 0 && $unidad > 0) {
 					if ($contra2 == $contra) {
 						$this->model->AgregarChofer($nombre, $apellidos, $telefono, $ganancia, $empresa, $socio, $estatus, $noempleado, $unidad);
-
+                        $dataExistenciaNuevoChofer = array(
+							'existenciachoferNuevoChofer' => $this->model->BuscarChofer($telefono,$nombre,$apellidos,$socio,$noempleado)
+							);
+							foreach ($dataExistenciaNuevoChofer as $key => $value) {
+								$idchofer=$value['id_chofer'];
+							}
 						//crear el usuario
-						$this->model->AgregarUsuario($usuario, $contra, 3, $noempleado, $estatus);
+						$this->model->AgregarUsuario($usuario, $contra, 3, $idchofer, $estatus);
 						$this->session->set('NOTIFICACION', '2');
 						return redirect()->to(base_url("Home/chofer"));
 					} else {	//Notificar que las contrasenas no son iguales
@@ -482,7 +536,7 @@ class Home extends BaseController
 
 			if ($contra == $contra2) {
 				$this->model->ActualizarChofer($nombre, $apellidos, $telefono, $ganancia, $empresa, $estatus, $idchofer, $unidad, $socio);
-				$this->model->ActualizarUsuarioChofer($usuario, $contra, $estatus, $noempleado);
+				$this->model->ActualizarUsuarioChofer($usuario, $contra, $estatus, $idchofer);
 				$this->session->set('NOTIFICACION', '4');
 				return redirect()->to(base_url("Home/chofer"));
 			} else {
@@ -655,6 +709,14 @@ class Home extends BaseController
 				'tipopago' => $this->model->TodosTipoPago()
 			);
 		}else if($ticket>0 and $fecha!=""){
+			$dataVentaEmpresa = array(
+				'dataVentaEmpresa' => $this->model->BuscarVentaTicketFecha($ticket,$fecha),
+				'drivers' => $this->model->TodosChofer(),
+				'unidades' => $this->model->TodasUnidades(),
+				'tipopago' => $this->model->TodosTipoPago()
+			);
+		}
+		else {
 			$dataVentaEmpresa = array(
 				'dataVentaEmpresa' => $this->model->BuscarVentaTicketFecha($ticket,$fecha),
 				'drivers' => $this->model->TodosChofer(),
@@ -2196,5 +2258,121 @@ class Home extends BaseController
 		}
 		return json_encode($data);
 	}
+	//buscar venta por socios
+	
+	public function ventaSocios()
+	{
+		//revisar si existe notificacion quiere decir si es primera vez en la pagia
+		if (isset($_SESSION['NOTIFICACION'])) {
+			return view('socios/header')
+				. view('socios/ventas')
+				. view('socios/footer');
+		} else {   //Excepcion para cuando notificacion no existe tenga como valor 0
+			$this->session->set('NOTIFICACION', '0');
+			return view('socios/header')
+				. view('socios/ventas')
+				. view('socios/footer');
+		}
+
+	}
+ 
+	public function BuscarVentaSocios()
+	{
+		$id_socio = $_SESSION['id_socio'];
+		$fecha = $_POST['fecha'];
+		$ticket = 0;
+		
+	
+			$dataVentaEmpresa = array(
+				'dataVentaEmpresa' => $this->model->BuscarVentaSocio($id_socio, $fecha),
+				'drivers' => $this->model->TodosChofer(),
+				'unidades' => $this->model->TodasUnidades(),
+				'tipopago' => $this->model->TodosTipoPago()
+			);
+		
+		if ($id_socio > 0) {
+			if ($dataVentaEmpresa['dataVentaEmpresa'] == false) {
+
+				$this->session->set('NOTIFICACION', '1');
+				return redirect()->to(base_url("Home/ventaSocios"));
+
+
+			} else {
+				$this->session->set('NOTIFICACION', '2');
+				return view('socios/header')
+					. view('socios/ventas', $dataVentaEmpresa)
+					. view('socios/footer');
+
+
+			}
+		} else {
+			$this->session->set('NOTIFICACION', '3');
+			return redirect()->to(base_url("Home/ventaSocios"));
+		}
+
+
+
+
+	}
+	
+
+
+	public function CatalogoConceptos()
+	{
+		$dataConceptos = array('dataConceptos' => $this->model->CargarConceptos());
+		
+	
+		    if (isset($_SESSION['NOTIFICACION'])) {
+			    return view('RedView/header')
+				    . view('RedView/CatalogoConceptos', $dataConceptos)
+				    . view('RedView/footer');
+		    } else {   //Excepcion para cuando notificacion no existe tenga como valor 0
+			    $this->session->set('NOTIFICACION', '0');
+			    return view('RedView/header')
+				    . view('RedView/CatalogoConceptos', $dataConceptos)
+				    . view('RedView/footer');
+		    }
+	
+	
+	}
+	//agregar concepto
+	public function AgregarConcepto()
+	{
+		if($_POST['idconcepto']==0)
+		{
+			$data = [
+			'nombre' => $this->request->getPost('nombre')
+			];
+			if ($this->model->AgregarConcepto($data)) {
+				$this->session->set('NOTIFICACION', '2');
+				return redirect()->to(base_url("Home/CatalogoConceptos"));
+			}
+			$this->session->set('NOTIFICACION', '3');
+			return redirect()->to(base_url("Home/CatalogoConceptos"));
+		}
+		else
+		{
+			if(isset($_POST['estatus']))
+			{
+				$estatus='ACTIVADO';
+			}
+			else
+			{
+				$estatus='DESACTIVADO';
+			}
+			$data = [
+				'idconcepto' => $this->request->getPost('idconcepto'),
+				'nombre' => $this->request->getPost('nombre'),
+				'estatus' => $estatus
+			];
+			if ($this->model->ActualizarConcepto($data)) {
+					$this->session->set('NOTIFICACION', '4');
+				return redirect()->to(base_url("Home/CatalogoConceptos"));
+			}
+			$this->session->set('NOTIFICACION', '3');
+			return redirect()->to(base_url("Home/CatalogoConceptos"));
+		}
+	}
+	
 
 }

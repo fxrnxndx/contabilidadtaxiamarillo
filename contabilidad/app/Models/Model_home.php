@@ -469,9 +469,9 @@ class Model_home extends Model
     }
   }
 
-  function setTotalToSale($id_sale, $total)
+  function setTotalToSale($id_sale, $total, $totalMXN, $moneda)
   {
-    $sql = "UPDATE tbl_ventas SET total='{$total}'
+    $sql = "UPDATE tbl_ventas SET total='{$total}', totalMXN='{$totalMXN}', id_moneda_fk='{$moneda}'
     WHERE id_ventas={$id_sale}";
     $query = $this->db->query($sql);
 
@@ -482,9 +482,9 @@ class Model_home extends Model
       return false;
     }
   }
-  function setTipoPago($id_sale, $tipopago)
+  function setTipoPago($id_sale, $tipopago, $tipo_tarjeta)
   {
-    $sql = "UPDATE tbl_ventas SET id_tipo_pago_fk='{$tipopago}'
+    $sql = "UPDATE tbl_ventas SET id_tipo_pago_fk='{$tipopago}', id_tipo_tarjeta_fk='{$tipo_tarjeta}'
     WHERE id_ventas={$id_sale}";
     $query = $this->db->query($sql);
 
@@ -654,6 +654,30 @@ class Model_home extends Model
   INNER JOIN tbl_empresa as empresa ON venta.id_empresa_fk=empresa.id_empresa
   INNER JOIN tbl_vendedor as vendedor ON venta.id_vendedor_fk=vendedor.id_vendedor
   WHERE  venta.id_empresa_fk={$empresa} and venta.fecha_venta BETWEEN '{$fecha} 00:00:00' AND '{$fecha} 23:59:59' ORDER BY id_ventas ASC ";
+    $query = $this->db->query($sql);
+
+    if ($query->getresultArray()) {
+      return $query;
+    }
+    else {
+      return false;
+    }
+  }
+  function BuscarVentaSocio($id_socio, $fecha)
+  {
+    $sql = "SELECT venta.* ,
+  (Select Pago from tbl_tipo_pago WHERE id_tipo_pago=venta.id_tipo_pago_fk) as tipopago,
+  (select nacionalidad from tbl_tipo_moneda where id_moneda=venta.id_moneda_fk) as moneda,
+  (select nombre from tbl_vendedor where id_vendedor=venta.id_asignador) as asignadornom,
+   empresa.nombre as empresanom,
+   chofer.nombre as chofernom,
+    vendedor.nombre as vendedornom 
+     FROM tbl_ventas as venta 
+  INNER JOIN tbl_chofer as chofer ON venta.id_chofer_fk = chofer.id_chofer
+  INNER JOIN tbl_unidad as unidad ON venta.id_unidad_fk = unidad.id_unidad
+  INNER JOIN tbl_empresa as empresa ON venta.id_empresa_fk=empresa.id_empresa
+  INNER JOIN tbl_vendedor as vendedor ON venta.id_vendedor_fk=vendedor.id_vendedor
+  WHERE  unidad.id_socio_fk={$id_socio} and venta.estatus='VENDIDO' and venta.fecha_venta BETWEEN '{$fecha} 00:00:00' AND '{$fecha} 23:59:59' ORDER BY id_ventas ASC ";
     $query = $this->db->query($sql);
 
     if ($query->getresultArray()) {
@@ -1270,6 +1294,56 @@ class Model_home extends Model
     $query = $this->db->query($sql);
 
     if ($query->getresultArray()) {
+      return $query;
+    }
+    else {
+      return false;
+    }
+  }
+
+  function BuscarChofer($telefono,$nombre,$apellidos,$socio,$noempleado)
+  {
+    $sql = "SELECT * FROM tbl_chofer WHERE telefono='{$telefono}' and nombre='{$nombre}' and apellidos='{$apellidos}' and socio='{$socio}' and numero_empleado='{$noempleado}'";
+    $query = $this->db->query($sql);
+
+    if ($query->getresultArray()) {
+      return $query;
+    }
+    else {
+      return false;
+    }
+  }
+  function CargarConceptos()
+  {
+    $sql = "SELECT * FROM tbl_catalogo_conceptos ";
+    $query = $this->db->query($sql);
+
+    if ($query->getresultArray()) {
+      return $query;
+    }
+    else {
+      return false;
+    }
+  }
+  function AgregarConcepto($data)
+  {
+    $sql = "INSERT INTO tbl_catalogo_conceptos (nombre) VALUES ('{$data['nombre']}')";
+    $query = $this->db->query($sql);
+
+    if ($query) {
+      return $query;
+    }
+    else {
+      return false;
+    }
+  }
+  function ActualizarConcepto($data)
+  {
+   
+    $sql = "UPDATE tbl_catalogo_conceptos SET nombre='{$data['nombre']}',estatus='{$data['estatus']}' WHERE id_concepto={$data['idconcepto']}";
+    $query = $this->db->query($sql);
+
+    if ($query) {
       return $query;
     }
     else {
