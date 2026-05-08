@@ -120,6 +120,12 @@
             </span>
           </a>
         </li>
+         <li>
+          <a href=<?php echo (base_url("Home/RegistrarGastos")); ?>>
+            <i class="zmdi zmdi-format-list-bulleted"></i> <span>Registrar Gastos
+            </span>
+          </a>
+        </li>
 
 
       </ul>

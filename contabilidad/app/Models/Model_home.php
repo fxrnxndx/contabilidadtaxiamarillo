@@ -1350,6 +1350,73 @@ class Model_home extends Model
       return false;
     }
   }
+  function CargarGastosMes()
+  {
+    $sql = "SELECT *,conceptos.nombre as conceptonombre,socios.nombre as socionombre,socios.apellidos as socioapellidos FROM tbl_gastos 
+    INNER JOIN tbl_catalogo_conceptos as conceptos ON tbl_gastos.concepto=conceptos.id_concepto 
+    INNER JOIN tbl_socios as socios ON tbl_gastos.socio=socios.id_socios 
+    where month(fecha_gasto)=month(CURDATE()) and year(fecha_gasto)=year(CURDATE()) ";
+    $query = $this->db->query($sql);
+
+    if ($query->getresultArray()) {
+      return $query;
+    }
+    else {
+      return false;
+    }
+  }
+  function CargarSocios(){
+    $sql = "SELECT * FROM tbl_socios ";
+    $query = $this->db->query($sql);
+
+    if ($query->getresultArray()) {
+      return $query;
+    }
+    else {
+      return false;
+    }
+  }
+  function ActualizarGasto($data)
+  {
+   
+    $sql = "UPDATE tbl_gastos SET concepto='{$data['id_concepto']}',monto='{$data['monto']}',socio='{$data['id_socio']}',fecha_gasto='{$data['fecha']}',descripcion='{$data['descripcion']}' WHERE id_gastos='{$data['idgasto']}'";
+    $query = $this->db->query($sql);
+
+    if ($query) {
+      return $query;
+    }
+    else {
+      return false;
+    }
+  }
+
+  function AgregarGasto($data)
+  {
+    $sql = "INSERT INTO tbl_gastos (concepto,monto,socio,fecha_gasto,descripcion,categoria,unidad) VALUES ('{$data['id_concepto']}','{$data['monto']}','{$data['id_socio']}','{$data['fecha']}','{$data['descripcion']}','{$data['categoria']}','{$data['id_unidad']}')";
+    $query = $this->db->query($sql);
+
+    if ($query) {
+      return $query;
+    }
+    else {
+      return false;
+    }
+  }
+  function BuscarGasto($fecha)
+  {
+    $sql = "SELECT *,conceptos.nombre as conceptonombre,socios.nombre as socionombre,socios.apellidos as socioapellidos FROM tbl_gastos 
+    INNER JOIN tbl_catalogo_conceptos as conceptos ON tbl_gastos.concepto=conceptos.id_concepto 
+    INNER JOIN tbl_socios as socios ON tbl_gastos.socio=socios.id_socios 
+    where fecha_gasto LIKE '%{$fecha}%' ";
+    $query = $this->db->query($sql);
+
+    if ($query->getresultArray()) {
+      return $query;
+    }
+    else {
+      return false;
+    }
+  }
 
 
 

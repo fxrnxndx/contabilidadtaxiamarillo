@@ -7,6 +7,7 @@ namespace App\Controllers;
 
 //require '../TaxiContabilidad/vendor/autoload.php';
 require './vendor/autoload.php';
+require ('./assets/fpdf.php');
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Reader\Xls;
@@ -2372,6 +2373,112 @@ class Home extends BaseController
 			$this->session->set('NOTIFICACION', '3');
 			return redirect()->to(base_url("Home/CatalogoConceptos"));
 		}
+	}
+
+	public function RegistrarGastos()
+	{
+		//VALIDAR SI LA SESION YA CADUCO PARA QUE VUELVA INICIAR SESSION
+		if(empty($_SESSION['usuario']))
+		{
+			return redirect()->to(base_url("Home/login"));
+		}
+		
+		$data = array('dataGastosMes' => $this->model->CargarGastosMes(),
+			'dataconceptos' => $this->model->CargarConceptos(),
+			'datasocios' => $this->model->CargarSocios(),
+		    'dataunidades' => $this->model->TodasUnidades());
+		
+	
+		    if (isset($_SESSION['NOTIFICACION'])) {
+			    return view('RedView/header')
+				    . view('RedView/RegistrarGastos', $data)
+				    . view('RedView/footer');
+		    } else {   //Excepcion para cuando notificacion no existe tenga como valor 0
+			    $this->session->set('NOTIFICACION', '0');
+			    return view('RedView/header')
+				    . view('RedView/RegistrarGastos', $data)
+				    . view('RedView/footer');
+		    }
+	
+	
+	}
+	//agregar gasto
+	public function AgregarGasto()
+	{
+		
+		//VALIDAR SI LA SESION YA CADUCO PARA QUE VUELVA INICIAR SESSION
+		if(empty($_SESSION['usuario']))
+		{
+			return redirect()->to(base_url("Home/login"));
+		}
+		
+		if($_POST['idgasto']==0)
+		{
+			
+			$data = [
+			'id_concepto' => $this->request->getPost('idconcepto'),
+			'monto' => $this->request->getPost('monto'),
+			'id_socio' => $this->request->getPost('socio'),
+			'fecha' => $this->request->getPost('fecha'),
+			'descripcion' => $this->request->getPost('descripcion'),
+			'categoria' => $this->request->getPost('categoria'),
+			'id_unidad' => $this->request->getPost('idunidad')
+			];
+			if ($this->model->AgregarGasto($data)) {
+				$this->session->set('NOTIFICACION', '2');
+				return redirect()->to(base_url("Home/RegistrarGastos"));
+			}
+			$this->session->set('NOTIFICACION', '3');
+			return redirect()->to(base_url("Home/RegistrarGastos"));
+		}
+		else
+		{
+			
+			
+			$data = [
+				'idgasto' => $this->request->getPost('idgasto'),
+				'id_concepto' => $this->request->getPost('idconcepto'),
+			'monto' => $this->request->getPost('monto'),
+			'id_socio' => $this->request->getPost('socio'),
+			'fecha' => $this->request->getPost('fecha'),
+			'descripcion' => $this->request->getPost('descripcion'),
+			'categoria' => $this->request->getPost('categoria'),
+			'id_unidad' => $this->request->getPost('idunidad')
+			];
+			if ($this->model->ActualizarGasto($data)) {
+					$this->session->set('NOTIFICACION', '4');
+				return redirect()->to(base_url("Home/RegistrarGastos"));
+			}
+			$this->session->set('NOTIFICACION', '3');
+			return redirect()->to(base_url("Home/RegistrarGastos"));
+		}
+	}
+	public function BuscarGasto()
+	{
+		//VALIDAR SI LA SESION YA CADUCO PARA QUE VUELVA INICIAR SESSION
+		if(empty($_SESSION['usuario']))
+		{
+			return redirect()->to(base_url("Home/login"));
+		}
+		
+		$fechames = $_POST['fechames'];
+		$data = array('dataGastosMes' => $this->model->BuscarGasto($fechames),
+			'dataconceptos' => $this->model->CargarConceptos(),
+			'datasocios' => $this->model->CargarSocios());
+		
+	
+		    if (isset($_SESSION['NOTIFICACION'])) {
+			    return view('RedView/header')
+				    . view('RedView/RegistrarGastos', $data)
+				    . view('RedView/footer');
+		    } else {   //Excepcion para cuando notificacion no existe tenga como valor 0
+			    $this->session->set('NOTIFICACION', '0');
+			    return view('RedView/header')
+				    . view('RedView/RegistrarGastos', $data)
+				    . view('RedView/footer');
+		    }
+	
+	
 	}
 	
 
